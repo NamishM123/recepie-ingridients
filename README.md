@@ -1,13 +1,25 @@
-# PREP – AI Interview Practice
+# Recipe Ingredients API
 
-AI-powered interview app that records your answers and clips them per question.
+AI-powered recipe generation API using Claude. Given a list of ingredients, it returns a structured recipe.
 
-## How it works
-1. Enter a job role (e.g. "Software Engineer at Google")
-2. AI generates interview questions
-3. Camera records you answering
-4. Say **"I'm done"** to clip & move to next question
-5. Review all your video clips at the end
+## Endpoints
+
+- `POST /api/recipe` — Generate a recipe from ingredients
+- `GET /health` — Health check
+
+### POST /api/recipe
+
+**Body:**
+```json
+{
+  "ingredients": ["chicken", "garlic", "lemon"],
+  "cuisine": "italian",
+  "difficulty": "easy",
+  "diet": "none"
+}
+```
+
+**Response:** JSON recipe object with title, description, prep/cook time, ingredients, steps, and a chef's tip.
 
 ## Running locally
 
@@ -15,35 +27,28 @@ AI-powered interview app that records your answers and clips them per question.
 npm install
 ```
 
-Add your OpenAI key to `.env.local`:
+Set your Anthropic API key:
 ```
-OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 ```bash
-npm run dev
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
-> **Use Chrome** — Safari doesn't support the Web Speech API
+API runs on [http://localhost:3001](http://localhost:3001)
 
 ## Deploy to Vercel
 
-### Option 1: Vercel CLI (recommended)
+### Option 1: Vercel CLI
 ```bash
 npm install -g vercel
 vercel
 ```
-When prompted, add your env var: `OPENAI_API_KEY`
+When prompted, add env var: `ANTHROPIC_API_KEY`
 
 ### Option 2: GitHub + Vercel Dashboard
-1. Push this folder to a GitHub repo
+1. Push this repo to GitHub
 2. Go to [vercel.com](https://vercel.com) → New Project → Import repo
-3. In **Environment Variables**, add `OPENAI_API_KEY`
+3. In **Environment Variables**, add `ANTHROPIC_API_KEY`
 4. Click Deploy
-
-## Notes
-- Video clips are stored in browser memory (Blob URLs) — they don't upload anywhere
-- Use "Download All Clips" on the review page to save them locally
-- Speech recognition requires Chrome (desktop)
