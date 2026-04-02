@@ -47,6 +47,7 @@ Respond ONLY with valid JSON, no markdown, no backticks, no preamble. Schema:
   }
 });
 
+app.get('/', (req, res) => res.json({ status: 'ok', message: 'Recipe API is running' }));
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 3001;
