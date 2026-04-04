@@ -231,6 +231,21 @@
       line-height: 1.7;
     }
 
+    /* ── Entrance animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate {
+      opacity: 0;
+      animation: fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.25s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.55s; }
+    .delay-5 { animation-delay: 0.7s; }
+
     /* ── Food facts ticker ── */
     .facts-ticker {
       position: absolute;
@@ -309,13 +324,13 @@
       <div class="hero-bg"></div>
       <div class="hero-glow"></div>
       <div class="hero-content">
-        <div class="hero-eyebrow">
+        <div class="hero-eyebrow animate delay-1">
           <span>✨</span> AI-Powered Personal Chef
         </div>
-        <h1 class="hero-headline">
+        <h1 class="hero-headline animate delay-2">
           Tell me what's in<br/>your kitchen.<br/><em>I'll make you a meal.</em>
         </h1>
-        <p class="hero-sub">
+        <p class="hero-sub animate delay-3">
           Add your ingredients, equipment, and dietary goal — ChefAI builds a personalized recipe with full macros in seconds.
         </p>
       </div>
