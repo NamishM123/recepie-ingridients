@@ -140,6 +140,119 @@
       margin: 0 auto;
       padding: 0 20px;
     }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 80px 20px 140px;
+    }
+
+    /* Animated gradient background */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #0d0c0b 0%, #1a1208 25%, #0f1a0a 50%, #1a0e08 75%, #0d0c0b 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+    }
+    [data-theme="light"] .hero-bg {
+      background: linear-gradient(135deg, #f7f4ef 0%, #fdf3e0 25%, #f0f7ec 50%, #fdf0e8 75%, #f7f4ef 100%);
+      background-size: 400% 400%;
+    }
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Subtle radial glow behind headline */
+    .hero-glow {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(232,160,32,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+
+    .hero-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      line-height: 1.12;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero-headline em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .hero-scroll .arrow { font-size: 18px; }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
   </style>
 </head>
 <body>
@@ -156,7 +269,30 @@
   </header>
 
   <main id="app">
-    <!-- Content will be added step by step -->
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span>✨</span> AI-Powered Personal Chef
+        </div>
+        <h1 class="hero-headline">
+          Tell me what's in<br/>your kitchen.<br/><em>I'll make you a meal.</em>
+        </h1>
+        <p class="hero-sub">
+          Add your ingredients, equipment, and dietary goal — ChefAI builds a personalized recipe with full macros in seconds.
+        </p>
+      </div>
+      <div class="hero-scroll">
+        <span>Start cooking</span>
+        <span class="arrow">↓</span>
+      </div>
+    </section>
+
+    <!-- Input + Recipe sections added in later steps -->
+
   </main>
 
   <script>
