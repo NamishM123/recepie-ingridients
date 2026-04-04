@@ -212,6 +212,122 @@
       font-weight: 600;
     }
 
+    /* ── Tag input ── */
+    .tag-field {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 54px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      cursor: text;
+      transition: border-color var(--transition);
+      align-items: center;
+    }
+    .tag-field:focus-within { border-color: var(--accent); }
+
+    .tag-field input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text-primary);
+      flex: 1;
+      min-width: 140px;
+    }
+    .tag-field input::placeholder { color: var(--text-muted); }
+
+    /* Pill tag */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      animation: pillBounce 0.35s cubic-bezier(0.34,1.6,0.64,1);
+    }
+    @keyframes pillBounce {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .pill.dark  { background: var(--accent); color: #0d0c0b; }
+    .pill.light { background: var(--card-hover); color: var(--text-secondary); border: 1px solid var(--border); }
+    .pill button {
+      background: none; border: none; cursor: pointer;
+      font-size: 15px; line-height: 1; padding: 0;
+      opacity: 0.6; color: inherit;
+    }
+    .pill button:hover { opacity: 1; }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .scan-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .scan-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .scan-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .mini-spin {
+      display: none;
+      width: 13px; height: 13px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hint { font-size: 12px; color: var(--text-muted); margin-top: 7px; }
+
+    /* Image preview */
+    .img-preview-wrap {
+      display: none;
+      position: relative;
+      width: fit-content;
+      margin-top: 12px;
+    }
+    .img-preview-wrap img {
+      max-width: 100%; max-height: 130px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .img-preview-wrap .x-btn {
+      position: absolute; top: -8px; right: -8px;
+      background: var(--accent); color: #0d0c0b;
+      border: none; border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+
     /* ── Hero ── */
     .hero {
       position: relative;
@@ -301,6 +417,30 @@
       margin: 0 auto 48px;
       line-height: 1.7;
     }
+
+    /* ── Toast ── */
+    #toast-container {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex; flex-direction: column; gap: 8px; align-items: center;
+    }
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.toast-error { border-color: #e05b32; color: #e05b32; }
+    .toast.toast-success { border-color: var(--protein); color: var(--protein); }
 
     /* ── Entrance animations ── */
     @keyframes fadeUp {
@@ -420,6 +560,27 @@
     <!-- ── Input Section ── -->
     <div class="input-section" id="input-section">
 
+      <!-- Ingredients Card -->
+      <div class="card animate delay-2">
+        <div class="field-row">
+          <div class="field-label">🥕 Ingredients</div>
+          <button class="scan-btn" id="ing-scan-btn" onclick="document.getElementById('ing-img-input').click()">
+            <span>📷</span>
+            <span id="ing-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="ing-spin"></div>
+          </button>
+        </div>
+        <input type="file" id="ing-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleIngImage(event)" />
+        <div class="tag-field" id="ing-field" onclick="document.getElementById('ing-input').focus()">
+          <input id="ing-input" placeholder="e.g. chicken breast, garlic… press Enter" autocomplete="off" />
+        </div>
+        <div class="img-preview-wrap" id="ing-preview-wrap">
+          <img id="ing-preview" alt="" />
+          <button class="x-btn" onclick="clearPreview('ing')">×</button>
+        </div>
+        <p class="hint">Press Enter or comma after each ingredient. Or scan a photo.</p>
+      </div>
+
       <!-- Dietary Goal Card -->
       <div class="card animate delay-1">
         <div class="card-title">🎯 Dietary Goal</div>
@@ -497,6 +658,88 @@
       }, 600);
     }
     setInterval(rotateFact, 5000);
+
+    // ── Generic tag system ──
+    const tagData = { ing: [], equip: [], season: [], pantry: [] };
+
+    function addTag(ns, val) {
+      val = val.trim().toLowerCase().replace(/,+$/, '');
+      if (!val || tagData[ns].includes(val)) return;
+      tagData[ns].push(val);
+      renderTags(ns);
+    }
+    function removeTag(ns, i) {
+      tagData[ns].splice(i, 1);
+      renderTags(ns);
+    }
+    function renderTags(ns) {
+      const field = document.getElementById(ns + '-field');
+      if (!field) return;
+      field.querySelectorAll('.pill').forEach(p => p.remove());
+      const inp = document.getElementById(ns + '-input');
+      tagData[ns].forEach((t, i) => {
+        const pill = document.createElement('div');
+        pill.className = 'pill ' + (ns === 'ing' ? 'dark' : 'light');
+        pill.innerHTML = `${t}<button onclick="removeTag('${ns}',${i})">×</button>`;
+        field.insertBefore(pill, inp);
+      });
+    }
+    function initTagInput(ns) {
+      const inp = document.getElementById(ns + '-input');
+      if (!inp) return;
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          addTag(ns, inp.value); inp.value = '';
+        } else if (e.key === 'Backspace' && !inp.value && tagData[ns].length) {
+          tagData[ns].pop(); renderTags(ns);
+        }
+      });
+    }
+    initTagInput('ing');
+
+    // Scan ingredient image
+    async function handleIngImage(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const dataUrl = await readFile(file);
+      document.getElementById('ing-preview').src = dataUrl;
+      document.getElementById('ing-preview-wrap').style.display = 'block';
+      setScanLoading('ing', true);
+      try {
+        const r = await fetch('/api/scan', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ image: dataUrl }) });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error);
+        d.ingredients.forEach(i => addTag('ing', i));
+      } catch(err) { showToast(err.message, 'error'); }
+      finally { setScanLoading('ing', false); e.target.value = ''; }
+    }
+    function clearPreview(ns) {
+      document.getElementById(ns+'-preview-wrap').style.display = 'none';
+      document.getElementById(ns+'-preview').src = '';
+    }
+    function setScanLoading(ns, on) {
+      const btn = document.getElementById(ns+'-scan-btn');
+      const txt = document.getElementById(ns+'-scan-txt');
+      const sp  = document.getElementById(ns+'-spin');
+      if (btn) btn.disabled = on;
+      if (txt) txt.textContent = on ? 'Scanning…' : (ns === 'equip' ? 'Scan kitchen' : 'Scan photo');
+      if (sp)  sp.style.display = on ? 'block' : 'none';
+    }
+    function readFile(f) {
+      return new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(f); });
+    }
+
+    // ── Toast ──
+    function showToast(msg, type='info') {
+      let tc = document.getElementById('toast-container');
+      if (!tc) { tc = document.createElement('div'); tc.id = 'toast-container'; document.body.appendChild(tc); }
+      const t = document.createElement('div');
+      t.className = 'toast toast-' + type;
+      t.textContent = msg;
+      tc.appendChild(t);
+      setTimeout(() => t.classList.add('show'), 10);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
+    }
 
     // ── Dietary goal selection ──
     let selectedGoal = 'balanced';
