@@ -49,6 +49,40 @@
       margin-bottom: 8px;
     }
 
+    .ingredient-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .ingredient-label-row label { margin-bottom: 0; }
+
+    .scan-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f5f5f0;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #444;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .scan-btn:hover { background: #eee; border-color: #ccc; }
+    .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .scan-btn .scan-spinner {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ccc;
+      border-top-color: #555;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
     .tag-input-wrap {
       display: flex;
       flex-wrap: wrap;
@@ -95,6 +129,37 @@
 
     .hint { font-size: 12px; color: #aaa; margin-top: 6px; }
 
+    /* image preview */
+    #scan-preview-wrap {
+      display: none;
+      margin-top: 14px;
+      position: relative;
+      width: fit-content;
+    }
+    #scan-preview {
+      max-width: 100%;
+      max-height: 180px;
+      border-radius: 10px;
+      border: 1.5px solid #e0e0e0;
+      display: block;
+    }
+    #clear-image {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px; }
 
     select {
@@ -127,42 +192,18 @@
     button#generate:active { transform: scale(0.99); }
     button#generate:disabled { background: #aaa; cursor: not-allowed; }
 
-    /* recipe output */
     #result { display: none; }
 
-    .recipe-title {
-      font-size: 26px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .recipe-desc {
-      font-size: 15px;
-      color: #555;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
+    .recipe-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .recipe-desc { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.6; }
 
-    .meta {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-    .meta-item {
-      background: #f5f5f0;
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 13px;
-      color: #444;
-    }
+    .meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .meta-item { background: #f5f5f0; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #444; }
     .meta-item strong { display: block; font-size: 11px; text-transform: uppercase; color: #999; margin-bottom: 2px; }
 
     h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 12px; }
 
-    .ingredients-list {
-      list-style: none;
-      margin-bottom: 24px;
-    }
+    .ingredients-list { list-style: none; margin-bottom: 24px; }
     .ingredients-list li {
       padding: 8px 0;
       border-bottom: 1px solid #f0f0f0;
@@ -172,17 +213,8 @@
     }
     .ingredients-list li span:first-child { color: #888; min-width: 70px; font-size: 13px; }
 
-    .steps-list {
-      list-style: none;
-      margin-bottom: 24px;
-    }
-    .steps-list li {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 14px;
-      font-size: 15px;
-      line-height: 1.6;
-    }
+    .steps-list { list-style: none; margin-bottom: 24px; }
+    .steps-list li { display: flex; gap: 14px; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
     .step-num {
       background: #1a1a1a;
       color: #fff;
@@ -241,11 +273,27 @@
 
 <main>
   <div class="card">
-    <label for="ingredient-input">Ingredients</label>
+    <div class="ingredient-label-row">
+      <label for="ingredient-input">Ingredients</label>
+      <button class="scan-btn" id="scan-btn" onclick="triggerScan()">
+        <span>📷</span>
+        <span id="scan-btn-text">Scan photo</span>
+        <div class="scan-spinner" id="scan-spinner"></div>
+      </button>
+    </div>
+
+    <!-- hidden file input — accepts camera on mobile, file on desktop -->
+    <input type="file" id="image-input" accept="image/*" capture="environment" style="display:none" onchange="handleImageSelected(event)" />
+
     <div class="tag-input-wrap" id="tag-wrap">
       <input id="ingredient-input" type="text" placeholder="Type an ingredient and press Enter…" />
     </div>
-    <p class="hint">Press Enter or comma to add each ingredient.</p>
+    <p class="hint">Press Enter or comma to add. Or scan a photo of your ingredients.</p>
+
+    <div id="scan-preview-wrap">
+      <img id="scan-preview" alt="Scanned ingredients" />
+      <button id="clear-image" onclick="clearImage()" title="Remove image">×</button>
+    </div>
 
     <div class="row">
       <div>
@@ -313,7 +361,6 @@
 
 <script>
   const tags = [];
-
   const input = document.getElementById('ingredient-input');
   const wrap = document.getElementById('tag-wrap');
 
@@ -331,11 +378,7 @@
   function addTag(val) {
     if (!val || tags.includes(val)) return;
     tags.push(val);
-    const tag = document.createElement('div');
-    tag.className = 'tag';
-    tag.innerHTML = `${val} <button onclick="removeTag(${tags.length - 1})">×</button>`;
-    tag.dataset.index = tags.length - 1;
-    wrap.insertBefore(tag, input);
+    renderTags();
     input.value = '';
   }
 
@@ -353,6 +396,65 @@
       wrap.insertBefore(tag, input);
     });
   }
+
+  // ---------- scan ----------
+
+  function triggerScan() {
+    document.getElementById('image-input').click();
+  }
+
+  function handleImageSelected(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+
+      // show preview
+      const preview = document.getElementById('scan-preview');
+      preview.src = dataUrl;
+      document.getElementById('scan-preview-wrap').style.display = 'block';
+
+      // call scan API
+      setScanLoading(true);
+      hideError();
+      try {
+        const res = await fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl }),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Scan failed.');
+        }
+        const { ingredients } = await res.json();
+        ingredients.forEach(addTag);
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        setScanLoading(false);
+        // reset so same file can be re-selected
+        e.target.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImage() {
+    document.getElementById('scan-preview-wrap').style.display = 'none';
+    document.getElementById('scan-preview').src = '';
+  }
+
+  function setScanLoading(on) {
+    const btn = document.getElementById('scan-btn');
+    btn.disabled = on;
+    document.getElementById('scan-btn-text').textContent = on ? 'Scanning…' : 'Scan photo';
+    document.getElementById('scan-spinner').style.display = on ? 'block' : 'none';
+  }
+
+  // ---------- generate ----------
 
   async function generateRecipe() {
     if (tags.length === 0) {
@@ -396,13 +498,11 @@
     document.getElementById('r-cook').textContent = r.cook_time;
     document.getElementById('r-servings').textContent = r.servings;
 
-    const ingList = document.getElementById('r-ingredients');
-    ingList.innerHTML = r.ingredients.map(i =>
+    document.getElementById('r-ingredients').innerHTML = r.ingredients.map(i =>
       `<li><span>${i.amount}</span><span>${i.name}</span></li>`
     ).join('');
 
-    const stepsList = document.getElementById('r-steps');
-    stepsList.innerHTML = r.steps.map((s, i) =>
+    document.getElementById('r-steps').innerHTML = r.steps.map((s, i) =>
       `<li><div class="step-num">${i + 1}</div><span>${s}</span></li>`
     ).join('');
 

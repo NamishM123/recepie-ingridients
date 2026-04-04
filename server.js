@@ -9,7 +9,7 @@ const app = express();
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- helpers ----------
@@ -43,9 +43,46 @@ function parseRecipe(rawText) {
 
 // ---------- routes ----------
 
-
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.post('/api/scan', async (req, res) => {
+  const { image } = req.body;
+  if (!image || !image.startsWith('data:image/')) {
+    return res.status(400).json({ error: 'Provide a valid base64 image.' });
+  }
+
+  const [meta, base64] = image.split(',');
+  const mimeType = meta.match(/data:(image\/\w+);/)[1];
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4o',
+      max_tokens: 256,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: { url: `data:${mimeType};base64,${base64}` },
+          },
+          {
+            type: 'text',
+            text: 'List every food ingredient you can see in this image. Respond ONLY with a JSON array of lowercase ingredient name strings, e.g. ["chicken","garlic","lemon"]. No markdown, no explanation.',
+          },
+        ],
+      }],
+    });
+
+    const raw = completion.choices[0].message.content || '';
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const ingredients = JSON.parse(cleaned);
+    res.json({ ingredients });
+  } catch (err) {
+    console.error('Scan error:', err.message);
+    res.status(500).json({ error: 'Failed to identify ingredients from image.' });
+  }
 });
 
 app.post('/api/recipe', async (req, res) => {
