@@ -474,6 +474,50 @@
     }
     .ing-row .ing-name { color: var(--text-primary); }
 
+    /* Step cards */
+    .steps-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .step-card {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .step-card:hover { border-color: var(--border-light); background: var(--card-hover); }
+    .step-card.done {
+      opacity: 0.5;
+      border-color: var(--border);
+    }
+    .step-card.done .step-text { text-decoration: line-through; color: var(--text-muted); }
+    .step-num {
+      flex-shrink: 0;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .step-card.done .step-num {
+      background: var(--protein);
+      border-color: var(--protein);
+      color: #fff;
+    }
+    .step-card.done .step-num::after { content: '✓'; }
+    .step-card.done .step-num .num-val { display: none; }
+    .step-body { flex: 1; }
+    .step-text { font-size: 15px; line-height: 1.65; color: var(--text-primary); margin-bottom: 6px; }
+    .step-utensil {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      color: var(--accent); background: var(--accent-dim);
+      border-radius: 100px; padding: 2px 10px;
+    }
+
     /* ── Selects row ── */
     .selects-row {
       display: grid;
@@ -1039,6 +1083,12 @@
         <div class="ing-grid" id="r-ingredients"></div>
       </div>
 
+      <!-- Steps -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="r-section-title">📋 Instructions <span style="color:var(--text-muted);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0"> — tap a step to check it off</span></div>
+        <div class="steps-list" id="r-steps"></div>
+      </div>
+
     </div>
 
   </main>
@@ -1330,6 +1380,21 @@
       void sec.offsetWidth; // reflow
       sec.classList.add('visible');
       sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Steps
+      const stepsEl = document.getElementById('r-steps');
+      stepsEl.innerHTML = (d.steps || []).map((s, i) => {
+        const utensil = typeof s === 'object' ? s.utensil : '';
+        const text    = typeof s === 'object' ? s.instruction : s;
+        const uBadge  = utensil ? `<span class="step-utensil">🍴 ${utensil}</span>` : '';
+        return `<div class="step-card" onclick="this.classList.toggle('done')">
+          <div class="step-num"><span class="num-val">${i+1}</span></div>
+          <div class="step-body">
+            <div class="step-text">${text}</div>
+            ${uBadge}
+          </div>
+        </div>`;
+      }).join('');
+
       window._lastRecipe = d;
     }
 
