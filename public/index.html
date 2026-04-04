@@ -130,22 +130,56 @@
     }
 
     /* ── Main layout ── */
-    main {
-      padding-top: 64px;
-    }
+    body { overflow: hidden; } /* pages scroll internally */
 
-    /* ── Section wrapper ── */
-    .section {
+    /* ── Pages ── */
+    .page {
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+      padding-top: 64px;
+      z-index: 10;
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+      will-change: transform, opacity;
+    }
+    /* On mobile add bottom padding for nav */
+    @media (max-width: 700px) { .page { padding-bottom: 70px; } }
+
+    .page-active  { transform: translateY(0);    opacity: 1; pointer-events: auto; }
+    .page-below   { transform: translateY(100%); opacity: 1; pointer-events: none; }
+    .page-above   { transform: translateY(-6%);  opacity: 0; pointer-events: none; }
+
+    /* Recipe page inner wrapper */
+    .recipe-inner {
       max-width: 900px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 20px 20px 60px;
     }
+    @media (max-width: 640px) { .recipe-inner { padding: 14px 14px 60px; } }
+
+    /* Back button in header */
+    .back-btn {
+      display: none;
+      align-items: center; gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .back-btn.visible { display: flex; }
 
     /* ── Input section ── */
     .input-section {
       max-width: 900px;
       margin: 0 auto;
-      padding: 64px 20px 40px;
+      padding: 20px 20px 40px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -379,16 +413,7 @@
     hr.divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
 
     /* ── Recipe output ── */
-    .recipe-section {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-      display: none;
-    }
-    .recipe-section.visible {
-      display: block;
-      animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
-    }
+    .recipe-hero { margin-top: 0; }
 
     /* Hero image */
     .recipe-hero {
@@ -945,14 +970,7 @@
       will-change: opacity, transform;
     }
 
-    /* ── Recipe section slide up ── */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .recipe-section.visible {
-      animation: slideUp 0.55s cubic-bezier(0.22,1,0.36,1) forwards !important;
-    }
+    /* page-active transition already handles slide up */
 
     /* ── Scrollbar styling ── */
     ::-webkit-scrollbar { width: 6px; }
@@ -1045,6 +1063,7 @@
       <span class="logo-name">Chef<span>AI</span></span>
     </div>
     <div class="header-actions">
+      <button class="back-btn" id="back-btn" onclick="goToPage('page-input')">← Back</button>
       <button class="theme-toggle" id="theme-toggle" title="Toggle theme" onclick="toggleTheme()">🌙</button>
     </div>
   </header>
@@ -1080,7 +1099,8 @@
     </div>
   </nav>
 
-  <main id="app">
+  <!-- ── Page 1: Input ── -->
+  <div id="page-input" class="page page-active">
 
     <!-- ── Hero ── -->
     <section class="hero">
@@ -1263,8 +1283,11 @@
 
     </div>
 
-    <!-- ── Recipe Section ── -->
-    <div class="recipe-section" id="recipe-section">
+  </div><!-- end page-input -->
+
+  <!-- ── Page 2: Recipe ── -->
+  <div id="page-recipe" class="page page-below">
+    <div class="recipe-inner">
 
       <!-- Hero image + title -->
       <div class="recipe-hero">
@@ -1326,14 +1349,13 @@
 
       <!-- Action buttons -->
       <div class="action-row">
-        <button class="action-btn primary" onclick="regenerate()">✨ Regenerate Recipe</button>
+        <button class="action-btn primary" onclick="goToPage('page-input')">← New Recipe</button>
         <button class="action-btn" onclick="saveRecipe()">🔖 Save</button>
         <button class="action-btn" onclick="shareRecipe()">↗ Share</button>
       </div>
 
-    </div>
-
-  </main>
+    </div><!-- end recipe-inner -->
+  </div><!-- end page-recipe -->
 
   <script>
     // ── Theme ──
@@ -1384,16 +1406,25 @@
     }
     setInterval(rotateFact, 5000);
 
-    // ── Scroll-triggered fade-in for input cards ──
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; } });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.input-section .card').forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(card);
-    });
+    // ── Page navigation ──
+    function goToPage(targetId) {
+      const pages = ['page-input', 'page-recipe'];
+      pages.forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('page-active', 'page-above', 'page-below');
+        if (id === targetId) {
+          el.classList.add('page-active');
+          el.scrollTop = 0;
+        } else {
+          // pages before target go above, after go below
+          const targetIdx = pages.indexOf(targetId);
+          const thisIdx   = pages.indexOf(id);
+          el.classList.add(thisIdx < targetIdx ? 'page-above' : 'page-below');
+        }
+      });
+      // Show/hide back button
+      document.getElementById('back-btn').classList.toggle('visible', targetId === 'page-recipe');
+    }
 
     // ── Generic tag system ──
     const tagData = { ing: [], equip: [], season: [], pantry: [] };
@@ -1689,13 +1720,11 @@
         mc.style.display = 'block';
       } else { mc.style.display = 'none'; }
 
+      goToPage('page-recipe');
       window._lastRecipe = d;
     }
 
-    function regenerate() {
-      document.getElementById('recipe-section').classList.remove('visible');
-      document.getElementById('input-section').scrollIntoView({ behavior: 'smooth' });
-    }
+    function regenerate() { goToPage('page-input'); }
     function saveRecipe() {
       if (!window._lastRecipe) return;
       const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
