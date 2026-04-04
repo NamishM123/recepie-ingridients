@@ -9,6 +9,7 @@ const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 // ---------- helpers ----------
 
@@ -41,9 +42,6 @@ function parseRecipe(rawText) {
 
 // ---------- routes ----------
 
-app.get('/', (_req, res) => {
-  res.json({ status: 'ok', message: 'Recipe Ingredients API v2' });
-});
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
