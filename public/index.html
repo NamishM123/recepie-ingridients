@@ -518,6 +518,61 @@
       border-radius: 100px; padding: 2px 10px;
     }
 
+    /* Macro bar */
+    .macro-bar-wrap { margin-bottom: 20px; }
+    .macro-bar {
+      height: 10px; border-radius: 100px;
+      overflow: hidden; background: var(--border);
+      display: flex;
+    }
+    .macro-seg {
+      height: 100%; width: 0;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .macro-seg.protein { background: var(--protein); }
+    .macro-seg.carbs   { background: var(--carbs); }
+    .macro-seg.fat     { background: var(--fat); }
+    .macro-legend {
+      display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap;
+    }
+    .macro-legend-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-secondary);
+    }
+    .macro-legend-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+
+    /* Macro stats grid */
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 500px) { .macro-grid { grid-template-columns: repeat(2, 1fr); } }
+    .macro-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .macro-stat .macro-val {
+      font-size: 28px; font-weight: 700;
+      color: var(--accent); line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .macro-stat .macro-lbl {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+    .macro-summary {
+      font-size: 13px; color: var(--text-secondary);
+      font-style: italic; margin-top: 12px; text-align: center;
+    }
+
     /* ── Selects row ── */
     .selects-row {
       display: grid;
@@ -1089,6 +1144,25 @@
         <div class="steps-list" id="r-steps"></div>
       </div>
 
+      <!-- Macros -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="r-section-title">📊 Nutrition &amp; Macros <span style="color:var(--text-muted);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0"> per serving</span></div>
+        <div class="macro-bar-wrap">
+          <div class="macro-bar">
+            <div class="macro-seg protein" id="bar-protein"></div>
+            <div class="macro-seg carbs"   id="bar-carbs"></div>
+            <div class="macro-seg fat"     id="bar-fat"></div>
+          </div>
+          <div class="macro-legend">
+            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--protein)"></div>Protein</div>
+            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--carbs)"></div>Carbs</div>
+            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--fat)"></div>Fat</div>
+          </div>
+        </div>
+        <div class="macro-grid" id="r-macro-grid"></div>
+        <div class="macro-summary" id="r-macro-summary"></div>
+      </div>
+
     </div>
 
   </main>
@@ -1394,6 +1468,31 @@
           </div>
         </div>`;
       }).join('');
+
+      // Macros
+      const n = d.nutrition || {};
+      const p = n.protein || 0, c = n.carbohydrates || 0, f = n.fat || 0;
+      const total = p * 4 + c * 4 + f * 9 || 1;
+      // Reset bars then animate
+      ['protein','carbs','fat'].forEach(k => document.getElementById('bar-'+k).style.width = '0');
+      setTimeout(() => {
+        document.getElementById('bar-protein').style.width = (p*4/total*100).toFixed(1)+'%';
+        document.getElementById('bar-carbs').style.width   = (c*4/total*100).toFixed(1)+'%';
+        document.getElementById('bar-fat').style.width     = (f*9/total*100).toFixed(1)+'%';
+      }, 200);
+
+      const stats = [
+        { val: n.calories||'—',      lbl: 'Calories' },
+        { val: (p||'—')+'g',         lbl: 'Protein' },
+        { val: (c||'—')+'g',         lbl: 'Carbs' },
+        { val: (f||'—')+'g',         lbl: 'Fat' },
+        { val: (n.fiber||'—')+'g',   lbl: 'Fiber' },
+        { val: (n.sodium||'—')+'mg', lbl: 'Sodium' },
+      ];
+      document.getElementById('r-macro-grid').innerHTML = stats.map(s =>
+        `<div class="macro-stat"><div class="macro-val">${s.val}</div><div class="macro-lbl">${s.lbl}</div></div>`
+      ).join('');
+      document.getElementById('r-macro-summary').textContent = n.macro_summary || '';
 
       window._lastRecipe = d;
     }
