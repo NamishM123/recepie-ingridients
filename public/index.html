@@ -378,6 +378,59 @@
 
     hr.divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
 
+    /* ── Recipe output ── */
+    .recipe-section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      display: none;
+    }
+    .recipe-section.visible {
+      display: block;
+      animation: fadeUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+
+    /* Hero image */
+    .recipe-hero {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/7;
+      background: var(--card);
+      margin-bottom: 20px;
+    }
+    .recipe-hero-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.6s ease;
+    }
+    .recipe-hero-img.loading { opacity: 0; }
+    .recipe-hero-skeleton {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%);
+      background-size: 200% 100%;
+      animation: shimmerSkeleton 1.5s infinite;
+    }
+    @keyframes shimmerSkeleton {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .recipe-hero-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      padding: 60px 32px 28px;
+    }
+    .recipe-hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.15;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    }
+
     /* ── Selects row ── */
     .selects-row {
       display: grid;
@@ -922,6 +975,20 @@
 
     </div>
 
+    <!-- ── Recipe Section ── -->
+    <div class="recipe-section" id="recipe-section">
+
+      <!-- Hero image + title -->
+      <div class="recipe-hero">
+        <div class="recipe-hero-skeleton" id="hero-skeleton"></div>
+        <img class="recipe-hero-img loading" id="hero-img" alt="" />
+        <div class="recipe-hero-overlay">
+          <div class="recipe-hero-title" id="r-title"></div>
+        </div>
+      </div>
+
+    </div>
+
   </main>
 
   <script>
@@ -1187,9 +1254,33 @@
         clearInterval(loadingFactInterval);
       }
     }
-    // Stubs filled in later steps
-    function renderRecipe(d) {}
-    function generateDishImage(title, desc) {}
+    function renderRecipe(d) {
+      document.getElementById('r-title').textContent = d.title || '';
+      const sec = document.getElementById('recipe-section');
+      sec.classList.remove('visible');
+      sec.classList.add('visible');
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // more fields added in later steps
+      window._lastRecipe = d;
+    }
+
+    async function generateDishImage(title, desc) {
+      const img = document.getElementById('hero-img');
+      const sk  = document.getElementById('hero-skeleton');
+      img.classList.add('loading');
+      sk.style.display = 'block';
+      try {
+        const r = await fetch('/api/generate-image', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, description: desc }),
+        });
+        const d = await r.json();
+        if (d.url) {
+          img.onload = () => { img.classList.remove('loading'); sk.style.display = 'none'; };
+          img.src = d.url;
+        }
+      } catch(e) { sk.style.display = 'none'; }
+    }
 
     // ── Dietary goal selection ──
     let selectedGoal = 'balanced';
