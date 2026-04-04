@@ -23,67 +23,61 @@
       gap: 12px;
     }
     header span { font-size: 28px; }
-    header h1 { font-size: 22px; font-weight: 600; }
+    header h1  { font-size: 22px; font-weight: 600; }
 
-    main {
-      max-width: 760px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+    main { max-width: 760px; margin: 40px auto; padding: 0 20px; }
 
+    /* ---- cards ---- */
     .card {
       background: #fff;
       border-radius: 16px;
-      padding: 32px;
+      padding: 28px 32px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
 
-    label {
-      display: block;
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-header-left { display: flex; align-items: center; gap: 10px; }
+    .card-header-left .icon { font-size: 20px; }
+    .card-header-left h2 { font-size: 17px; font-weight: 700; }
+    .card-header-left .badge {
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+    }
+    .chevron { font-size: 13px; color: #aaa; transition: transform 0.2s; }
+    .chevron.open { transform: rotate(180deg); }
+
+    .collapsible { overflow: hidden; transition: max-height 0.3s ease; }
+
+    /* ---- labels ---- */
+    .field-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+    .field-label:first-child { margin-top: 0; }
+    .field-label label {
       font-size: 13px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #666;
-      margin-bottom: 8px;
     }
 
-    .ingredient-label-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .ingredient-label-row label { margin-bottom: 0; }
-
-    .scan-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #f5f5f0;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: #444;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .scan-btn:hover { background: #eee; border-color: #ccc; }
-    .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .scan-btn .scan-spinner {
-      display: none;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #ccc;
-      border-top-color: #555;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    .tag-input-wrap {
+    /* ---- tag input ---- */
+    .tag-wrap {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -91,176 +85,176 @@
       border-radius: 10px;
       padding: 10px 12px;
       cursor: text;
-      min-height: 52px;
+      min-height: 48px;
       align-items: center;
       transition: border-color 0.2s;
     }
-    .tag-input-wrap:focus-within { border-color: #1a1a1a; }
+    .tag-wrap:focus-within { border-color: #1a1a1a; }
 
     .tag {
-      background: #1a1a1a;
-      color: #fff;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .tag.dark  { background: #1a1a1a; color: #fff; }
+    .tag.light { background: #f0f0f0; color: #333; }
+    .tag button {
+      background: none; border: none; cursor: pointer;
+      font-size: 15px; line-height: 1; padding: 0; opacity: 0.5;
+    }
+    .tag.dark  button:hover { opacity: 1; color: #fff; }
+    .tag.light button:hover { opacity: 1; color: #000; }
+
+    .tag-input {
+      border: none; outline: none; font-size: 14px;
+      flex: 1; min-width: 100px; background: transparent;
+    }
+
+    /* ---- quick-add chips ---- */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .chip {
+      background: #f5f5f0;
+      border: 1.5px solid #e5e5e0;
       border-radius: 20px;
       padding: 4px 12px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .tag button {
-      background: none;
-      border: none;
-      color: #aaa;
+      font-size: 12px;
       cursor: pointer;
-      font-size: 16px;
-      line-height: 1;
-      padding: 0;
+      color: #555;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
     }
-    .tag button:hover { color: #fff; }
+    .chip:hover  { background: #eaeae5; border-color: #ccc; }
+    .chip.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 
-    #ingredient-input {
-      border: none;
-      outline: none;
-      font-size: 15px;
-      flex: 1;
-      min-width: 120px;
-      background: transparent;
+    /* ---- scan button ---- */
+    .scan-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: #f5f5f0; border: 1.5px solid #e0e0e0;
+      border-radius: 8px; padding: 5px 11px;
+      font-size: 12px; font-weight: 600; cursor: pointer; color: #444;
+      transition: background 0.2s, border-color 0.2s;
     }
+    .scan-btn:hover:not(:disabled) { background: #eee; border-color: #ccc; }
+    .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .hint { font-size: 12px; color: #aaa; margin-top: 6px; }
-
-    /* image preview */
-    #scan-preview-wrap {
-      display: none;
-      margin-top: 14px;
-      position: relative;
-      width: fit-content;
-    }
-    #scan-preview {
-      max-width: 100%;
-      max-height: 180px;
-      border-radius: 10px;
-      border: 1.5px solid #e0e0e0;
-      display: block;
-    }
-    #clear-image {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: #1a1a1a;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .mini-spinner {
+      display: none; width: 13px; height: 13px;
+      border: 2px solid #ccc; border-top-color: #555;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
     }
 
-    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px; }
+    /* ---- image preview ---- */
+    .preview-wrap {
+      display: none; position: relative;
+      width: fit-content; margin-top: 12px;
+    }
+    .preview-wrap img {
+      max-width: 100%; max-height: 140px;
+      border-radius: 10px; border: 1.5px solid #e0e0e0; display: block;
+    }
+    .preview-wrap .x-btn {
+      position: absolute; top: -8px; right: -8px;
+      background: #1a1a1a; color: #fff; border: none;
+      border-radius: 50%; width: 22px; height: 22px;
+      font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ---- hint ---- */
+    .hint { font-size: 12px; color: #aaa; margin-top: 5px; }
+
+    /* ---- divider ---- */
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 20px 0; }
+
+    /* ---- row of selects ---- */
+    .row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
     select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 15px;
-      background: #fff;
-      cursor: pointer;
-      outline: none;
+      width: 100%; padding: 10px 12px;
+      border: 1.5px solid #e0e0e0; border-radius: 10px;
+      font-size: 14px; background: #fff; cursor: pointer; outline: none;
       transition: border-color 0.2s;
     }
     select:focus { border-color: #1a1a1a; }
 
-    button#generate {
-      margin-top: 24px;
-      width: 100%;
-      padding: 14px;
-      background: #1a1a1a;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+    /* ---- generate button ---- */
+    .generate-btn {
+      margin-top: 24px; width: 100%; padding: 14px;
+      background: #1a1a1a; color: #fff; border: none;
+      border-radius: 10px; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
     }
-    button#generate:hover { background: #333; }
-    button#generate:active { transform: scale(0.99); }
-    button#generate:disabled { background: #aaa; cursor: not-allowed; }
+    .generate-btn:hover:not(:disabled) { background: #333; }
+    .generate-btn:active { transform: scale(0.99); }
+    .generate-btn:disabled { background: #aaa; cursor: not-allowed; }
 
+    .btn-spinner {
+      display: none; width: 20px; height: 20px;
+      border: 2px solid #fff4; border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- error box ---- */
+    .error-box {
+      background: #fef2f2; border: 1px solid #fca5a5;
+      color: #b91c1c; padding: 12px 16px;
+      border-radius: 10px; font-size: 14px;
+      display: none; margin-top: 14px;
+    }
+
+    /* ---- recipe output ---- */
     #result { display: none; }
 
     .recipe-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
-    .recipe-desc { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.6; }
+    .recipe-desc  { font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.6; }
 
-    .meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
     .meta-item { background: #f5f5f0; border-radius: 8px; padding: 8px 14px; font-size: 13px; color: #444; }
     .meta-item strong { display: block; font-size: 11px; text-transform: uppercase; color: #999; margin-bottom: 2px; }
 
-    h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 12px; }
+    h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #999; margin-bottom: 12px; }
 
-    .ingredients-list { list-style: none; margin-bottom: 24px; }
-    .ingredients-list li {
-      padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 15px;
-      display: flex;
-      gap: 8px;
+    .ing-list { list-style: none; margin-bottom: 24px; }
+    .ing-list li {
+      padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+      font-size: 15px; display: flex; gap: 8px;
     }
-    .ingredients-list li span:first-child { color: #888; min-width: 70px; font-size: 13px; }
+    .ing-list li span:first-child { color: #888; min-width: 70px; font-size: 13px; }
 
     .steps-list { list-style: none; margin-bottom: 24px; }
     .steps-list li { display: flex; gap: 14px; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
     .step-num {
-      background: #1a1a1a;
-      color: #fff;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 2px;
+      background: #1a1a1a; color: #fff; border-radius: 50%;
+      width: 26px; height: 26px; display: flex; align-items: center;
+      justify-content: center; font-size: 12px; font-weight: 700;
+      flex-shrink: 0; margin-top: 2px;
     }
 
     .tip {
-      background: #fffbeb;
-      border-left: 3px solid #f59e0b;
-      padding: 12px 16px;
-      border-radius: 0 8px 8px 0;
-      font-size: 14px;
-      color: #555;
+      background: #fffbeb; border-left: 3px solid #f59e0b;
+      padding: 12px 16px; border-radius: 0 8px 8px 0;
+      font-size: 14px; color: #555;
     }
     .tip strong { color: #b45309; }
 
-    .spinner {
+    /* ---- kitchen saved banner ---- */
+    .saved-banner {
       display: none;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #fff4;
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .error-box {
-      background: #fef2f2;
-      border: 1px solid #fca5a5;
-      color: #b91c1c;
-      padding: 14px 16px;
-      border-radius: 10px;
-      font-size: 14px;
-      display: none;
-      margin-top: 16px;
+      background: #f0fdf4; border: 1px solid #86efac;
+      color: #15803d; border-radius: 8px;
+      padding: 8px 14px; font-size: 13px;
+      margin-top: 14px; text-align: center;
     }
   </style>
 </head>
@@ -272,32 +266,103 @@
 </header>
 
 <main>
-  <div class="card">
-    <div class="ingredient-label-row">
-      <label for="ingredient-input">Ingredients</label>
-      <button class="scan-btn" id="scan-btn" onclick="triggerScan()">
-        <span>📷</span>
-        <span id="scan-btn-text">Scan photo</span>
-        <div class="scan-spinner" id="scan-spinner"></div>
-      </button>
+
+  <!-- ===== KITCHEN SETUP CARD ===== -->
+  <div class="card" id="kitchen-card">
+    <div class="card-header" onclick="toggleKitchen()">
+      <div class="card-header-left">
+        <span class="icon">🏠</span>
+        <h2>Kitchen Setup</h2>
+        <span class="badge" id="kitchen-badge" style="display:none">Saved</span>
+      </div>
+      <span class="chevron" id="kitchen-chevron">▼</span>
     </div>
 
-    <!-- hidden file input — accepts camera on mobile, file on desktop -->
-    <input type="file" id="image-input" accept="image/*" capture="environment" style="display:none" onchange="handleImageSelected(event)" />
+    <div class="collapsible" id="kitchen-body" style="max-height:0">
+      <div style="padding-top:20px">
 
-    <div class="tag-input-wrap" id="tag-wrap">
-      <input id="ingredient-input" type="text" placeholder="Type an ingredient and press Enter…" />
+        <!-- Equipment -->
+        <div class="field-label">
+          <label>Cooking Equipment</label>
+          <button class="scan-btn" id="equip-scan-btn" onclick="triggerEquipScan()">
+            <span>📷</span>
+            <span id="equip-scan-text">Scan kitchen</span>
+            <div class="mini-spinner" id="equip-spinner"></div>
+          </button>
+        </div>
+        <input type="file" id="equip-image-input" accept="image/*" capture="environment"
+               style="display:none" onchange="handleEquipImage(event)" />
+
+        <div class="preview-wrap" id="equip-preview-wrap">
+          <img id="equip-preview" alt="kitchen" />
+          <button class="x-btn" onclick="clearEquipImage()">×</button>
+        </div>
+
+        <div class="tag-wrap" id="equip-wrap" onclick="document.getElementById('equip-input').focus()">
+          <input class="tag-input" id="equip-input" placeholder="Type equipment and press Enter…" />
+        </div>
+        <div class="chips" id="equip-chips"></div>
+        <p class="hint">Scan a photo of your kitchen or add manually. Recipes will only use what you have.</p>
+
+        <hr class="divider" />
+
+        <!-- Seasonings -->
+        <div class="field-label">
+          <label>Seasonings &amp; Spices</label>
+        </div>
+        <div class="tag-wrap" id="season-wrap" onclick="document.getElementById('season-input').focus()">
+          <input class="tag-input" id="season-input" placeholder="Type a seasoning and press Enter…" />
+        </div>
+        <div class="chips" id="season-chips"></div>
+
+        <hr class="divider" />
+
+        <!-- Pantry staples -->
+        <div class="field-label">
+          <label>Pantry Staples</label>
+        </div>
+        <div class="tag-wrap" id="pantry-wrap" onclick="document.getElementById('pantry-input').focus()">
+          <input class="tag-input" id="pantry-input" placeholder="e.g. olive oil, flour, sugar…" />
+        </div>
+        <div class="chips" id="pantry-chips"></div>
+
+        <button class="generate-btn" style="margin-top:18px;background:#2d6a4f" onclick="saveKitchen()">
+          Save Kitchen Setup
+        </button>
+        <div class="saved-banner" id="saved-banner">Kitchen setup saved!</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== INGREDIENTS CARD ===== -->
+  <div class="card">
+    <div class="field-label" style="margin-top:0">
+      <label>Ingredients</label>
+      <button class="scan-btn" id="ing-scan-btn" onclick="triggerIngScan()">
+        <span>📷</span>
+        <span id="ing-scan-text">Scan photo</span>
+        <div class="mini-spinner" id="ing-spinner"></div>
+      </button>
+    </div>
+    <input type="file" id="ing-image-input" accept="image/*" capture="environment"
+           style="display:none" onchange="handleIngImage(event)" />
+
+    <div class="preview-wrap" id="ing-preview-wrap">
+      <img id="ing-preview" alt="ingredients" />
+      <button class="x-btn" onclick="clearIngImage()">×</button>
+    </div>
+
+    <div class="tag-wrap" id="ing-wrap" onclick="document.getElementById('ing-input').focus()">
+      <input class="tag-input" id="ing-input" placeholder="Type an ingredient and press Enter…" />
     </div>
     <p class="hint">Press Enter or comma to add. Or scan a photo of your ingredients.</p>
 
-    <div id="scan-preview-wrap">
-      <img id="scan-preview" alt="Scanned ingredients" />
-      <button id="clear-image" onclick="clearImage()" title="Remove image">×</button>
-    </div>
+    <hr class="divider" />
 
     <div class="row">
       <div>
-        <label for="cuisine">Cuisine</label>
+        <div class="field-label" style="margin-top:0"><label>Cuisine</label></div>
         <select id="cuisine">
           <option value="any">Any</option>
           <option value="italian">Italian</option>
@@ -310,7 +375,7 @@
         </select>
       </div>
       <div>
-        <label for="difficulty">Difficulty</label>
+        <div class="field-label" style="margin-top:0"><label>Difficulty</label></div>
         <select id="difficulty">
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
@@ -318,7 +383,7 @@
         </select>
       </div>
       <div>
-        <label for="diet">Diet</label>
+        <div class="field-label" style="margin-top:0"><label>Diet</label></div>
         <select id="diet">
           <option value="none">None</option>
           <option value="vegetarian">Vegetarian</option>
@@ -330,210 +395,401 @@
       </div>
     </div>
 
-    <button id="generate" onclick="generateRecipe()">
+    <button class="generate-btn" id="generate-btn" onclick="generateRecipe()">
       <span id="btn-text">Generate Recipe</span>
-      <div class="spinner" id="spinner"></div>
+      <div class="btn-spinner" id="btn-spinner"></div>
     </button>
     <div class="error-box" id="error-box"></div>
   </div>
 
+  <!-- ===== RECIPE OUTPUT ===== -->
   <div class="card" id="result">
     <div class="recipe-title" id="r-title"></div>
-    <div class="recipe-desc" id="r-desc"></div>
-
+    <div class="recipe-desc"  id="r-desc"></div>
     <div class="meta">
       <div class="meta-item"><strong>Prep</strong><span id="r-prep"></span></div>
       <div class="meta-item"><strong>Cook</strong><span id="r-cook"></span></div>
       <div class="meta-item"><strong>Servings</strong><span id="r-servings"></span></div>
     </div>
-
     <h3>Ingredients</h3>
-    <ul class="ingredients-list" id="r-ingredients"></ul>
-
+    <ul class="ing-list" id="r-ingredients"></ul>
     <h3>Steps</h3>
     <ol class="steps-list" id="r-steps"></ol>
-
     <div class="tip" id="r-tip" style="display:none">
       <strong>Chef's Tip: </strong><span id="r-tip-text"></span>
     </div>
   </div>
+
 </main>
 
 <script>
-  const tags = [];
-  const input = document.getElementById('ingredient-input');
-  const wrap = document.getElementById('tag-wrap');
+// ============================================================
+// State
+// ============================================================
+const EQUIPMENT_SUGGESTIONS = [
+  'oven','stovetop','microwave','air fryer','blender','food processor',
+  'instant pot','slow cooker','stand mixer','wok','cast iron pan',
+  'grill','toaster oven','rice cooker',
+];
+const SEASONING_SUGGESTIONS = [
+  'salt','black pepper','garlic powder','onion powder','paprika','cumin',
+  'chili flakes','oregano','thyme','rosemary','cinnamon','turmeric',
+  'cayenne','bay leaves','soy sauce','fish sauce','hot sauce',
+];
+const PANTRY_SUGGESTIONS = [
+  'olive oil','vegetable oil','butter','all-purpose flour','sugar',
+  'brown sugar','honey','eggs','milk','heavy cream','chicken broth',
+  'canned tomatoes','rice','pasta','bread crumbs','vinegar',
+];
 
+// Tag collections
+const ingTags     = loadList('ing');
+const equipTags   = loadList('equip');
+const seasonTags  = loadList('season');
+const pantryTags  = loadList('pantry');
+
+function loadList(key) {
+  try { return JSON.parse(localStorage.getItem('tags_' + key) || '[]'); }
+  catch { return []; }
+}
+function saveList(key, arr) {
+  localStorage.setItem('tags_' + key, JSON.stringify(arr));
+}
+
+// ============================================================
+// Generic tag input
+// ============================================================
+function initTagInput(inputId, wrapId, arr, color, afterAdd) {
+  const input = document.getElementById(inputId);
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      addTag(input.value.trim().replace(/,$/, ''));
-    } else if (e.key === 'Backspace' && input.value === '' && tags.length) {
-      removeTag(tags.length - 1);
+      const v = input.value.trim().replace(/,$/, '');
+      if (v) { addTagTo(arr, v, wrapId, input, color, afterAdd); }
+    } else if (e.key === 'Backspace' && input.value === '' && arr.length) {
+      arr.pop();
+      renderTagsIn(arr, wrapId, input, color, afterAdd);
+      if (afterAdd) afterAdd();
     }
   });
+}
 
-  wrap.addEventListener('click', () => input.focus());
+function addTagTo(arr, val, wrapId, inputEl, color, afterAdd) {
+  val = val.toLowerCase().trim();
+  if (!val || arr.includes(val)) return;
+  arr.push(val);
+  renderTagsIn(arr, wrapId, inputEl, color, afterAdd);
+  if (inputEl) inputEl.value = '';
+  if (afterAdd) afterAdd();
+}
 
-  function addTag(val) {
-    if (!val || tags.includes(val)) return;
-    tags.push(val);
-    renderTags();
-    input.value = '';
+function renderTagsIn(arr, wrapId, inputEl, color, afterAdd) {
+  const wrap = document.getElementById(wrapId);
+  wrap.querySelectorAll('.tag').forEach(t => t.remove());
+  arr.forEach((t, i) => {
+    const tag = document.createElement('div');
+    tag.className = `tag ${color}`;
+    tag.innerHTML = `${t} <button onclick="removeTagFrom(${JSON.stringify(arr)}, ${i}, '${wrapId}', document.getElementById('${inputEl?.id}'), '${color}', null)">×</button>`;
+    // Use data-driven removal instead
+    tag.querySelector('button').onclick = () => {
+      arr.splice(i, 1);
+      renderTagsIn(arr, wrapId, inputEl, color, afterAdd);
+      if (afterAdd) afterAdd();
+    };
+    wrap.insertBefore(tag, inputEl);
+  });
+}
+
+// ============================================================
+// Quick-add chips
+// ============================================================
+function initChips(containerId, suggestions, arr, wrapId, inputEl, color, afterAdd) {
+  const container = document.getElementById(containerId);
+  suggestions.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (arr.includes(s) ? ' active' : '');
+    chip.textContent = '+ ' + s;
+    chip.dataset.val = s;
+    chip.onclick = () => {
+      if (arr.includes(s)) {
+        arr.splice(arr.indexOf(s), 1);
+        chip.classList.remove('active');
+      } else {
+        arr.push(s);
+        chip.classList.add('active');
+      }
+      renderTagsIn(arr, wrapId, inputEl, color, afterAdd);
+      if (afterAdd) afterAdd();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function syncChips(containerId, arr) {
+  document.querySelectorAll(`#${containerId} .chip`).forEach(c => {
+    c.classList.toggle('active', arr.includes(c.dataset.val));
+  });
+}
+
+// ============================================================
+// Kitchen collapse
+// ============================================================
+let kitchenOpen = !localStorage.getItem('kitchen_saved');
+
+function toggleKitchen() {
+  kitchenOpen = !kitchenOpen;
+  applyKitchenOpen();
+}
+
+function applyKitchenOpen() {
+  const body    = document.getElementById('kitchen-body');
+  const chevron = document.getElementById('kitchen-chevron');
+  if (kitchenOpen) {
+    body.style.maxHeight = '9999px';
+    chevron.classList.add('open');
+  } else {
+    body.style.maxHeight = '0';
+    chevron.classList.remove('open');
   }
+}
 
-  function removeTag(i) {
-    tags.splice(i, 1);
-    renderTags();
+// ============================================================
+// Save kitchen
+// ============================================================
+function saveKitchen() {
+  saveList('equip',  equipTags);
+  saveList('season', seasonTags);
+  saveList('pantry', pantryTags);
+  localStorage.setItem('kitchen_saved', '1');
+
+  const badge  = document.getElementById('kitchen-badge');
+  const banner = document.getElementById('saved-banner');
+  badge.style.display = 'inline';
+  banner.style.display = 'block';
+  setTimeout(() => { banner.style.display = 'none'; }, 2500);
+
+  updateKitchenBadge();
+  kitchenOpen = false;
+  applyKitchenOpen();
+}
+
+function updateKitchenBadge() {
+  const total = equipTags.length + seasonTags.length + pantryTags.length;
+  const badge = document.getElementById('kitchen-badge');
+  if (total > 0 && localStorage.getItem('kitchen_saved')) {
+    badge.style.display = 'inline';
+    badge.textContent = total + ' items';
+  } else {
+    badge.style.display = 'none';
   }
+}
 
-  function renderTags() {
-    wrap.querySelectorAll('.tag').forEach(t => t.remove());
-    tags.forEach((t, i) => {
-      const tag = document.createElement('div');
-      tag.className = 'tag';
-      tag.innerHTML = `${t} <button onclick="removeTag(${i})">×</button>`;
-      wrap.insertBefore(tag, input);
+// ============================================================
+// Equipment scan
+// ============================================================
+function triggerEquipScan() {
+  document.getElementById('equip-image-input').click();
+}
+
+async function handleEquipImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const dataUrl = await readFile(file);
+
+  document.getElementById('equip-preview').src = dataUrl;
+  document.getElementById('equip-preview-wrap').style.display = 'block';
+
+  setScanLoading('equip', true);
+  hideError();
+  try {
+    const res = await fetch('/api/scan-kitchen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl }),
     });
+    if (!res.ok) throw new Error((await res.json()).error || 'Scan failed.');
+    const { equipment } = await res.json();
+    const inputEl = document.getElementById('equip-input');
+    equipment.forEach(eq => addTagTo(equipTags, eq, 'equip-wrap', inputEl, 'light', () => syncChips('equip-chips', equipTags)));
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    setScanLoading('equip', false);
+    e.target.value = '';
+  }
+}
+
+function clearEquipImage() {
+  document.getElementById('equip-preview-wrap').style.display = 'none';
+  document.getElementById('equip-preview').src = '';
+}
+
+// ============================================================
+// Ingredient scan
+// ============================================================
+function triggerIngScan() {
+  document.getElementById('ing-image-input').click();
+}
+
+async function handleIngImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const dataUrl = await readFile(file);
+
+  document.getElementById('ing-preview').src = dataUrl;
+  document.getElementById('ing-preview-wrap').style.display = 'block';
+
+  setScanLoading('ing', true);
+  hideError();
+  try {
+    const res = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl }),
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Scan failed.');
+    const { ingredients } = await res.json();
+    const inputEl = document.getElementById('ing-input');
+    ingredients.forEach(ing => addTagTo(ingTags, ing, 'ing-wrap', inputEl, 'dark', null));
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    setScanLoading('ing', false);
+    e.target.value = '';
+  }
+}
+
+function clearIngImage() {
+  document.getElementById('ing-preview-wrap').style.display = 'none';
+  document.getElementById('ing-preview').src = '';
+}
+
+// ============================================================
+// Generate recipe
+// ============================================================
+async function generateRecipe() {
+  if (ingTags.length === 0) { showError('Add at least one ingredient.'); return; }
+
+  setGenLoading(true);
+  hideError();
+
+  try {
+    const res = await fetch('/api/recipe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ingredients: ingTags,
+        cuisine:    document.getElementById('cuisine').value,
+        difficulty: document.getElementById('difficulty').value,
+        diet:       document.getElementById('diet').value,
+        equipment:  equipTags,
+        seasonings: seasonTags,
+        pantry:     pantryTags,
+      }),
+    });
+    if (!res.ok) throw new Error((await res.json()).error || 'Something went wrong.');
+    renderRecipe(await res.json());
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    setGenLoading(false);
+  }
+}
+
+function renderRecipe(r) {
+  document.getElementById('r-title').textContent    = r.title;
+  document.getElementById('r-desc').textContent     = r.description;
+  document.getElementById('r-prep').textContent     = r.prep_time;
+  document.getElementById('r-cook').textContent     = r.cook_time;
+  document.getElementById('r-servings').textContent = r.servings;
+
+  document.getElementById('r-ingredients').innerHTML = r.ingredients
+    .map(i => `<li><span>${i.amount}</span><span>${i.name}</span></li>`).join('');
+
+  document.getElementById('r-steps').innerHTML = r.steps
+    .map((s, i) => `<li><div class="step-num">${i+1}</div><span>${s}</span></li>`).join('');
+
+  const tipEl = document.getElementById('r-tip');
+  if (r.tip) {
+    document.getElementById('r-tip-text').textContent = r.tip;
+    tipEl.style.display = 'block';
+  } else {
+    tipEl.style.display = 'none';
   }
 
-  // ---------- scan ----------
+  const result = document.getElementById('result');
+  result.style.display = 'block';
+  result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-  function triggerScan() {
-    document.getElementById('image-input').click();
-  }
+// ============================================================
+// Utilities
+// ============================================================
+function readFile(file) {
+  return new Promise((resolve) => {
+    const r = new FileReader();
+    r.onload = e => resolve(e.target.result);
+    r.readAsDataURL(file);
+  });
+}
 
-  function handleImageSelected(e) {
-    const file = e.target.files[0];
-    if (!file) return;
+function setScanLoading(prefix, on) {
+  const btn     = document.getElementById(prefix + '-scan-btn');
+  const text    = document.getElementById(prefix + '-scan-text');
+  const spinner = document.getElementById(prefix + '-spinner');
+  if (btn)     btn.disabled             = on;
+  if (text)    text.textContent         = on ? 'Scanning…' : (prefix === 'equip' ? 'Scan kitchen' : 'Scan photo');
+  if (spinner) spinner.style.display    = on ? 'block' : 'none';
+}
 
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
+function setGenLoading(on) {
+  document.getElementById('generate-btn').disabled          = on;
+  document.getElementById('btn-text').style.display         = on ? 'none'  : 'inline';
+  document.getElementById('btn-spinner').style.display      = on ? 'block' : 'none';
+}
 
-      // show preview
-      const preview = document.getElementById('scan-preview');
-      preview.src = dataUrl;
-      document.getElementById('scan-preview-wrap').style.display = 'block';
+function showError(msg) {
+  const el = document.getElementById('error-box');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideError() {
+  document.getElementById('error-box').style.display = 'none';
+}
 
-      // call scan API
-      setScanLoading(true);
-      hideError();
-      try {
-        const res = await fetch('/api/scan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: dataUrl }),
-        });
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Scan failed.');
-        }
-        const { ingredients } = await res.json();
-        ingredients.forEach(addTag);
-      } catch (err) {
-        showError(err.message);
-      } finally {
-        setScanLoading(false);
-        // reset so same file can be re-selected
-        e.target.value = '';
-      }
-    };
-    reader.readAsDataURL(file);
-  }
+// ============================================================
+// Boot
+// ============================================================
+(function init() {
+  // Ingredient tags
+  const ingInput = document.getElementById('ing-input');
+  initTagInput('ing-input', 'ing-wrap', ingTags, 'dark', null);
+  renderTagsIn(ingTags, 'ing-wrap', ingInput, 'dark', null);
 
-  function clearImage() {
-    document.getElementById('scan-preview-wrap').style.display = 'none';
-    document.getElementById('scan-preview').src = '';
-  }
+  // Equipment tags
+  const equipInput = document.getElementById('equip-input');
+  const afterEquip = () => syncChips('equip-chips', equipTags);
+  initTagInput('equip-input', 'equip-wrap', equipTags, 'light', afterEquip);
+  renderTagsIn(equipTags, 'equip-wrap', equipInput, 'light', afterEquip);
+  initChips('equip-chips', EQUIPMENT_SUGGESTIONS, equipTags, 'equip-wrap', equipInput, 'light', afterEquip);
 
-  function setScanLoading(on) {
-    const btn = document.getElementById('scan-btn');
-    btn.disabled = on;
-    document.getElementById('scan-btn-text').textContent = on ? 'Scanning…' : 'Scan photo';
-    document.getElementById('scan-spinner').style.display = on ? 'block' : 'none';
-  }
+  // Seasoning tags
+  const seasonInput = document.getElementById('season-input');
+  const afterSeason = () => syncChips('season-chips', seasonTags);
+  initTagInput('season-input', 'season-wrap', seasonTags, 'light', afterSeason);
+  renderTagsIn(seasonTags, 'season-wrap', seasonInput, 'light', afterSeason);
+  initChips('season-chips', SEASONING_SUGGESTIONS, seasonTags, 'season-wrap', seasonInput, 'light', afterSeason);
 
-  // ---------- generate ----------
+  // Pantry tags
+  const pantryInput = document.getElementById('pantry-input');
+  const afterPantry = () => syncChips('pantry-chips', pantryTags);
+  initTagInput('pantry-input', 'pantry-wrap', pantryTags, 'light', afterPantry);
+  renderTagsIn(pantryTags, 'pantry-wrap', pantryInput, 'light', afterPantry);
+  initChips('pantry-chips', PANTRY_SUGGESTIONS, pantryTags, 'pantry-wrap', pantryInput, 'light', afterPantry);
 
-  async function generateRecipe() {
-    if (tags.length === 0) {
-      showError('Add at least one ingredient.');
-      return;
-    }
-
-    setLoading(true);
-    hideError();
-
-    const body = {
-      ingredients: tags,
-      cuisine: document.getElementById('cuisine').value,
-      difficulty: document.getElementById('difficulty').value,
-      diet: document.getElementById('diet').value,
-    };
-
-    try {
-      const res = await fetch('/api/recipe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Something went wrong.');
-      }
-      const recipe = await res.json();
-      renderRecipe(recipe);
-    } catch (err) {
-      showError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function renderRecipe(r) {
-    document.getElementById('r-title').textContent = r.title;
-    document.getElementById('r-desc').textContent = r.description;
-    document.getElementById('r-prep').textContent = r.prep_time;
-    document.getElementById('r-cook').textContent = r.cook_time;
-    document.getElementById('r-servings').textContent = r.servings;
-
-    document.getElementById('r-ingredients').innerHTML = r.ingredients.map(i =>
-      `<li><span>${i.amount}</span><span>${i.name}</span></li>`
-    ).join('');
-
-    document.getElementById('r-steps').innerHTML = r.steps.map((s, i) =>
-      `<li><div class="step-num">${i + 1}</div><span>${s}</span></li>`
-    ).join('');
-
-    const tipEl = document.getElementById('r-tip');
-    if (r.tip) {
-      document.getElementById('r-tip-text').textContent = r.tip;
-      tipEl.style.display = 'block';
-    } else {
-      tipEl.style.display = 'none';
-    }
-
-    const result = document.getElementById('result');
-    result.style.display = 'block';
-    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function setLoading(on) {
-    document.getElementById('generate').disabled = on;
-    document.getElementById('btn-text').style.display = on ? 'none' : 'inline';
-    document.getElementById('spinner').style.display = on ? 'block' : 'none';
-  }
-
-  function showError(msg) {
-    const el = document.getElementById('error-box');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  function hideError() {
-    document.getElementById('error-box').style.display = 'none';
-  }
+  // Kitchen card state
+  applyKitchenOpen();
+  updateKitchenBadge();
+})();
 </script>
 </body>
 </html>
