@@ -20,33 +20,53 @@ function imagePayload(dataUrl) {
   return { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } };
 }
 
-function buildPrompt({ ingredients, cuisine, difficulty, diet, equipment, seasonings, pantry }) {
-  const cuisinePart = cuisine && cuisine !== 'any' ? ` ${cuisine}` : '';
-  const dietPart    = diet && diet !== 'none'      ? ` that is ${diet}` : '';
-  const diffPart    = difficulty || 'easy';
+function buildRecipePrompt({ ingredients, equipment, seasonings, pantry, cuisine, difficulty, diet, dietary_goal }) {
+  const cuisinePart    = cuisine     && cuisine     !== 'any'  ? ` ${cuisine}`       : '';
+  const dietPart       = diet        && diet        !== 'none' ? ` that is ${diet}`  : '';
+  const diffPart       = difficulty  || 'easy';
+  const goalPart       = dietary_goal && dietary_goal !== 'balanced'
+    ? `The user's primary dietary goal is: ${dietary_goal}. Optimise ingredient quantities, cooking method, and macros around this goal.`
+    : 'No specific goal given — aim for a balanced, nutritious meal.';
 
-  const equipLine     = equipment?.length  ? `\nAvailable equipment: ${equipment.join(', ')}.`   : '';
-  const seasonLine    = seasonings?.length ? `\nAvailable seasonings/spices: ${seasonings.join(', ')}.` : '';
-  const pantryLine    = pantry?.length     ? `\nPantry staples on hand: ${pantry.join(', ')}.`    : '';
-  const kitchenNote   = (equipLine || seasonLine || pantryLine)
-    ? `\n\nKitchen context — only suggest techniques and equipment the cook actually has:${equipLine}${seasonLine}${pantryLine}`
+  const equipLine   = equipment?.length  ? `\nAvailable equipment: ${equipment.join(', ')}.`            : '';
+  const seasonLine  = seasonings?.length ? `\nAvailable seasonings/spices: ${seasonings.join(', ')}.`   : '';
+  const pantryLine  = pantry?.length     ? `\nPantry staples available: ${pantry.join(', ')}.`          : '';
+  const kitchenCtx  = (equipLine || seasonLine || pantryLine)
+    ? `\n\nKitchen context (ONLY use what is listed — flag anything else as optional):${equipLine}${seasonLine}${pantryLine}`
     : '';
 
-  return `You are a world-class chef. Given these ingredients: ${ingredients.join(', ')}${kitchenNote}
+  return {
+    system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored exactly to what the user has available and their dietary goals. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates.`,
+    user: `Ingredients available: ${ingredients.join(', ')}${kitchenCtx}
 
-Create a ${diffPart}${cuisinePart} recipe${dietPart}. Only use equipment, seasonings, and pantry items listed above (if provided). Do not assume the cook has anything else.
+${goalPart}
+Difficulty: ${diffPart}${cuisinePart}${dietPart ? ', diet: ' + dietPart : ''}
 
-Respond ONLY with valid JSON — no markdown, no backticks, no extra text. Use this exact schema:
+Respond ONLY with valid JSON — no markdown, no backticks, no extra text. Exact schema:
 {
-  "title": "Recipe Name",
-  "description": "One vivid sentence describing the dish",
+  "title": "Creative recipe name",
+  "cuisine_style": "e.g. Italian, Asian-Fusion",
+  "dietary_goal_match": "e.g. High Protein ✓  or  Balanced ✓",
+  "difficulty": "Beginner|Intermediate|Advanced",
   "prep_time": "X min",
   "cook_time": "X min",
-  "servings": "X",
-  "ingredients": [{ "amount": "X cup", "name": "ingredient name" }],
-  "steps": ["Step 1 instruction", "Step 2 instruction"],
-  "tip": "One chef tip or variation (can be empty string)"
-}`;
+  "servings": 2,
+  "ingredients": [{ "amount": "200g", "name": "chicken breast" }],
+  "missing_optional": [{ "name": "lemon", "reason": "adds brightness" }],
+  "steps": [{ "instruction": "Full step text referencing the utensil.", "utensil": "cast iron pan" }],
+  "plating_tip": "One sentence on presentation.",
+  "nutrition": {
+    "calories": 520,
+    "protein": 45,
+    "carbohydrates": 38,
+    "fat": 16,
+    "fiber": 3,
+    "sugar": 4,
+    "sodium": 780,
+    "macro_summary": "High protein, moderate carb — ideal for muscle building."
+  }
+}`
+  };
 }
 
 function parseJSON(raw) {
@@ -57,19 +77,16 @@ function parseJSON(raw) {
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-// Scan food ingredients from a photo
+// Scan food ingredients from photo
 app.post('/api/scan', async (req, res) => {
   const { image } = req.body;
-  if (!image?.startsWith('data:image/')) {
-    return res.status(400).json({ error: 'Provide a valid base64 image.' });
-  }
+  if (!image?.startsWith('data:image/')) return res.status(400).json({ error: 'Provide a valid base64 image.' });
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
-      max_tokens: 256,
+      model: 'gpt-4o', max_tokens: 256,
       messages: [{ role: 'user', content: [
         imagePayload(image),
-        { type: 'text', text: 'List every food ingredient visible in this image. Respond ONLY with a JSON array of lowercase strings, e.g. ["chicken","garlic","lemon"]. No markdown, no explanation.' },
+        { type: 'text', text: 'List every food ingredient visible. Respond ONLY with a JSON array of lowercase strings e.g. ["chicken","garlic","lemon"]. No markdown.' },
       ]}],
     });
     res.json({ ingredients: parseJSON(completion.choices[0].message.content || '[]') });
@@ -79,22 +96,16 @@ app.post('/api/scan', async (req, res) => {
   }
 });
 
-// Scan kitchen equipment from a photo
+// Scan kitchen equipment from photo
 app.post('/api/scan-kitchen', async (req, res) => {
   const { image } = req.body;
-  if (!image?.startsWith('data:image/')) {
-    return res.status(400).json({ error: 'Provide a valid base64 image.' });
-  }
+  if (!image?.startsWith('data:image/')) return res.status(400).json({ error: 'Provide a valid base64 image.' });
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
-      max_tokens: 512,
+      model: 'gpt-4o', max_tokens: 512,
       messages: [{ role: 'user', content: [
         imagePayload(image),
-        { type: 'text', text: `Look at this kitchen image and identify every piece of cooking equipment you can see (e.g. oven, stovetop, microwave, air fryer, blender, stand mixer, wok, cast iron pan, instant pot, etc.).
-Respond ONLY with a JSON array of short lowercase equipment name strings.
-Example: ["oven","stovetop","blender","cast iron pan"]
-No markdown, no explanation.` },
+        { type: 'text', text: 'Identify every piece of cooking equipment visible (oven, stovetop, air fryer, blender, wok, instant pot, etc.). Respond ONLY with a JSON array of short lowercase strings. No markdown.' },
       ]}],
     });
     res.json({ equipment: parseJSON(completion.choices[0].message.content || '[]') });
@@ -104,34 +115,29 @@ No markdown, no explanation.` },
   }
 });
 
-// Generate a recipe
+// Generate recipe
 app.post('/api/recipe', async (req, res) => {
   const {
-    ingredients,
-    cuisine    = 'any',
-    difficulty = 'easy',
-    diet       = 'none',
-    equipment  = [],
-    seasonings = [],
-    pantry     = [],
+    ingredients, cuisine = 'any', difficulty = 'easy',
+    diet = 'none', dietary_goal = 'balanced',
+    equipment = [], seasonings = [], pantry = [],
   } = req.body;
 
   if (!Array.isArray(ingredients) || ingredients.length === 0) {
     return res.status(400).json({ error: 'Provide at least one ingredient.' });
   }
 
-  const prompt = buildPrompt({ ingredients, cuisine, difficulty, diet, equipment, seasonings, pantry });
+  const { system, user } = buildRecipePrompt({ ingredients, equipment, seasonings, pantry, cuisine, difficulty, diet, dietary_goal });
 
   let raw;
   try {
     const completion = await client.chat.completions.create({
-      model: 'gpt-4o',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
+      model: 'gpt-4o', max_tokens: 1500,
+      messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
     });
     raw = completion.choices[0].message.content || '';
   } catch (err) {
-    console.error('OpenAI API error:', err.message);
+    console.error('OpenAI error:', err.message);
     return res.status(502).json({ error: 'Failed to contact AI service.' });
   }
 
@@ -143,8 +149,26 @@ app.post('/api/recipe', async (req, res) => {
   }
 });
 
-// ---------- start ----------
+// Generate dish image via DALL-E 3
+app.post('/api/generate-image', async (req, res) => {
+  const { title, description } = req.body;
+  if (!title) return res.status(400).json({ error: 'Title required.' });
+  try {
+    const response = await client.images.generate({
+      model: 'dall-e-3',
+      prompt: `Professional food photography of "${title}". ${description || ''}. Cinematic lighting, shallow depth of field, on a dark slate surface, garnished beautifully, styled like a Michelin-star restaurant. Ultra-realistic, appetizing, warm tones.`,
+      n: 1,
+      size: '1792x1024',
+      quality: 'standard',
+    });
+    res.json({ url: response.data[0].url });
+  } catch (err) {
+    console.error('Image gen error:', err.message);
+    res.status(500).json({ error: 'Failed to generate image.' });
+  }
+});
 
+// ---------- start ----------
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3001;
   app.listen(PORT, () => console.log(`Recipe API running on http://localhost:${PORT}`));
