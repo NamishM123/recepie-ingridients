@@ -431,6 +431,49 @@
       text-shadow: 0 2px 12px rgba(0,0,0,0.5);
     }
 
+    /* Badges row */
+    .badges-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      border-radius: 100px;
+      padding: 5px 13px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .badge-cuisine   { background: rgba(232,160,32,0.12); color: var(--accent); border-color: rgba(232,160,32,0.3); }
+    .badge-goal      { background: rgba(82,183,136,0.12); color: var(--protein); border-color: rgba(82,183,136,0.3); }
+    .badge-diff      { background: rgba(140,134,128,0.12); color: var(--text-secondary); border-color: var(--border); }
+    .badge-time      { background: rgba(140,134,128,0.12); color: var(--text-secondary); border-color: var(--border); }
+    .badge-servings  { background: rgba(140,134,128,0.12); color: var(--text-secondary); border-color: var(--border); }
+
+    /* Section heading */
+    .r-section-title {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--text-muted); margin-bottom: 14px;
+    }
+
+    /* Ingredients 2-col */
+    .ing-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 500px) { .ing-grid { grid-template-columns: 1fr; } }
+    .ing-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .ing-row .ing-amount {
+      min-width: 64px; font-size: 12px;
+      color: var(--text-muted); font-weight: 500;
+    }
+    .ing-row .ing-name { color: var(--text-primary); }
+
     /* ── Selects row ── */
     .selects-row {
       display: grid;
@@ -987,6 +1030,15 @@
         </div>
       </div>
 
+      <!-- Badges row -->
+      <div class="badges-row" id="r-badges"></div>
+
+      <!-- Ingredients -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="r-section-title">🥕 Ingredients Used</div>
+        <div class="ing-grid" id="r-ingredients"></div>
+      </div>
+
     </div>
 
   </main>
@@ -1256,11 +1308,28 @@
     }
     function renderRecipe(d) {
       document.getElementById('r-title').textContent = d.title || '';
+
+      // Badges
+      const badges = document.getElementById('r-badges');
+      badges.innerHTML = [
+        d.cuisine_style     ? `<span class="badge badge-cuisine">🌍 ${d.cuisine_style}</span>` : '',
+        d.dietary_goal_match? `<span class="badge badge-goal">${d.dietary_goal_match}</span>` : '',
+        d.difficulty        ? `<span class="badge badge-diff">⚡ ${d.difficulty}</span>` : '',
+        (d.prep_time||d.cook_time) ? `<span class="badge badge-time">⏱ ${d.prep_time||''} prep · ${d.cook_time||''} cook</span>` : '',
+        d.servings          ? `<span class="badge badge-servings">🍽 ${d.servings} servings</span>` : '',
+      ].join('');
+
+      // Ingredients
+      const ingEl = document.getElementById('r-ingredients');
+      ingEl.innerHTML = (d.ingredients || []).map(i =>
+        `<div class="ing-row"><span class="ing-amount">${i.amount||''}</span><span class="ing-name">${i.name||''}</span></div>`
+      ).join('');
+
       const sec = document.getElementById('recipe-section');
       sec.classList.remove('visible');
+      void sec.offsetWidth; // reflow
       sec.classList.add('visible');
       sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // more fields added in later steps
       window._lastRecipe = d;
     }
 
