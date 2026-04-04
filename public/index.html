@@ -231,6 +231,40 @@
       line-height: 1.7;
     }
 
+    /* ── Food facts ticker ── */
+    .facts-ticker {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      z-index: 2;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 52px;
+    }
+    [data-theme="light"] .facts-ticker {
+      background: rgba(255,255,255,0.6);
+    }
+    .facts-ticker .fact-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .facts-ticker .fact-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 600px;
+      text-align: center;
+      transition: opacity 0.6s ease;
+    }
+    .facts-ticker .fact-text.hidden { opacity: 0; }
+
     /* Scroll indicator */
     .hero-scroll {
       position: absolute;
@@ -289,6 +323,12 @@
         <span>Start cooking</span>
         <span class="arrow">↓</span>
       </div>
+
+      <!-- Food facts ticker -->
+      <div class="facts-ticker">
+        <span class="fact-icon" id="fact-icon">🥩</span>
+        <span class="fact-text" id="fact-text">Protein builds and repairs muscle — aim for 0.8g per pound of bodyweight daily</span>
+      </div>
     </section>
 
     <!-- Input + Recipe sections added in later steps -->
@@ -309,6 +349,40 @@
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.dataset.theme = savedTheme;
     document.getElementById('theme-toggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    // ── Food facts ticker ──
+    const FACTS = [
+      { icon: '🥩', text: 'Protein builds and repairs muscle — aim for 0.8g per pound of bodyweight daily' },
+      { icon: '🍚', text: 'Complex carbs like rice and oats give you sustained energy without the crash' },
+      { icon: '🧑‍🍳', text: 'Cooking at home saves the average person $3,000–$5,000 a year vs eating out' },
+      { icon: '🥦', text: 'Broccoli has more protein per calorie than steak — gram for gram' },
+      { icon: '⏱️', text: 'Meal prepping once a week saves the average person 4–6 hours of cooking time' },
+      { icon: '🫀', text: 'Healthy fats from avocado and olive oil support heart health and brain function' },
+      { icon: '🌶️', text: 'Capsaicin in chili peppers can temporarily boost metabolism by up to 8%' },
+      { icon: '💧', text: 'Most people confuse thirst for hunger — drink a glass of water before snacking' },
+      { icon: '🥚', text: 'Eggs are one of the most complete protein sources, with all 9 essential amino acids' },
+      { icon: '🍌', text: "Bananas are nature's energy bar — fast carbs, potassium, and B6 in one package" },
+      { icon: '🔥', text: 'Cooking food actually increases its caloric bioavailability — your body absorbs more' },
+      { icon: '🧄', text: 'Garlic has been used medicinally for over 5,000 years and boosts immune function' },
+      { icon: '🏋️', text: 'A high protein breakfast reduces cravings and calorie intake for the rest of the day' },
+      { icon: '🍳', text: 'Cast iron pans add trace amounts of dietary iron to your food while cooking' },
+      { icon: '🥗', text: 'Eating a variety of colored vegetables ensures a wider range of micronutrients' },
+      { icon: '⚡', text: "Carbs are not the enemy — they are your brain's primary and preferred fuel source" },
+    ];
+    let factIndex = 0;
+    function rotateFact() {
+      const iconEl = document.getElementById('fact-icon');
+      const textEl = document.getElementById('fact-text');
+      if (!iconEl || !textEl) return;
+      textEl.classList.add('hidden');
+      setTimeout(() => {
+        factIndex = (factIndex + 1) % FACTS.length;
+        iconEl.textContent = FACTS[factIndex].icon;
+        textEl.textContent = FACTS[factIndex].text;
+        textEl.classList.remove('hidden');
+      }, 600);
+    }
+    setInterval(rotateFact, 5000);
   </script>
 </body>
 </html>
