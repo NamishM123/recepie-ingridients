@@ -2,10 +2,10 @@
 
 const express = require('express');
 const cors = require('cors');
-const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 
 const app = express();
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(cors());
 app.use(express.json());
@@ -60,14 +60,14 @@ app.post('/api/recipe', async (req, res) => {
 
   let raw;
   try {
-    const message = await client.messages.create({
-      model: 'claude-opus-4-5',
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4o',
       max_tokens: 1024,
       messages: [{ role: 'user', content: prompt }],
     });
-    raw = message.content.map((b) => b.text || '').join('');
+    raw = completion.choices[0].message.content || '';
   } catch (err) {
-    console.error('Anthropic API error:', err.message);
+    console.error('OpenAI API error:', err.message);
     return res.status(502).json({ error: 'Failed to contact AI service.' });
   }
 
