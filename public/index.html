@@ -573,6 +573,63 @@
       font-style: italic; margin-top: 12px; text-align: center;
     }
 
+    /* Plating tip */
+    .plating-tip {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: rgba(232,160,32,0.07);
+      border: 1px solid rgba(232,160,32,0.25);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .plating-tip .tip-icon { font-size: 24px; flex-shrink: 0; }
+    .plating-tip .tip-body {}
+    .plating-tip .tip-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent); margin-bottom: 4px;
+    }
+    .plating-tip .tip-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Missing ingredients */
+    .missing-card {
+      background: rgba(140,134,128,0.07);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .missing-card .missing-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px;
+    }
+    .missing-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 13px; margin-bottom: 6px; color: var(--text-secondary);
+    }
+    .missing-item .m-name { font-weight: 600; color: var(--text-primary); }
+
+    /* Action buttons */
+    .action-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 40px;
+    }
+    .action-btn {
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; color: var(--text-primary);
+      background: var(--card);
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .action-btn.primary {
+      background: var(--accent); color: #0d0c0b;
+      border-color: var(--accent); grid-column: 1 / -1;
+    }
+    .action-btn.primary:hover { background: var(--accent-hover); }
+
     /* ── Selects row ── */
     .selects-row {
       display: grid;
@@ -1163,6 +1220,28 @@
         <div class="macro-summary" id="r-macro-summary"></div>
       </div>
 
+      <!-- Plating tip -->
+      <div class="plating-tip" id="r-plating" style="display:none">
+        <div class="tip-icon">👨‍🍳</div>
+        <div class="tip-body">
+          <div class="tip-label">Plating Tip</div>
+          <div class="tip-text" id="r-plating-text"></div>
+        </div>
+      </div>
+
+      <!-- Missing optional -->
+      <div class="missing-card" id="r-missing" style="display:none">
+        <div class="missing-title">✨ Optional upgrades — not required but would elevate this dish</div>
+        <div id="r-missing-list"></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row">
+        <button class="action-btn primary" onclick="regenerate()">✨ Regenerate Recipe</button>
+        <button class="action-btn" onclick="saveRecipe()">🔖 Save</button>
+        <button class="action-btn" onclick="shareRecipe()">↗ Share</button>
+      </div>
+
     </div>
 
   </main>
@@ -1494,7 +1573,44 @@
       ).join('');
       document.getElementById('r-macro-summary').textContent = n.macro_summary || '';
 
+      // Plating tip
+      const pt = document.getElementById('r-plating');
+      if (d.plating_tip) {
+        document.getElementById('r-plating-text').textContent = d.plating_tip;
+        pt.style.display = 'flex';
+      } else { pt.style.display = 'none'; }
+
+      // Missing optional
+      const mc = document.getElementById('r-missing');
+      if (d.missing_optional?.length) {
+        document.getElementById('r-missing-list').innerHTML = d.missing_optional.map(m =>
+          `<div class="missing-item">➕ <div><span class="m-name">${m.name}</span> — ${m.reason}</div></div>`
+        ).join('');
+        mc.style.display = 'block';
+      } else { mc.style.display = 'none'; }
+
       window._lastRecipe = d;
+    }
+
+    function regenerate() {
+      document.getElementById('recipe-section').classList.remove('visible');
+      document.getElementById('input-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    function saveRecipe() {
+      if (!window._lastRecipe) return;
+      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+      saves.unshift({ ...window._lastRecipe, savedAt: Date.now() });
+      localStorage.setItem('saved_recipes', JSON.stringify(saves.slice(0, 20)));
+      showToast('Recipe saved! 🔖', 'success');
+    }
+    function shareRecipe() {
+      if (navigator.share && window._lastRecipe) {
+        navigator.share({ title: window._lastRecipe.title, text: window._lastRecipe.description || '', url: window.location.href })
+          .catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(window.location.href);
+        showToast('Link copied!', 'success');
+      }
     }
 
     async function generateDishImage(title, desc) {
