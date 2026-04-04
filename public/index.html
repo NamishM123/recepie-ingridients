@@ -378,6 +378,90 @@
 
     hr.divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
 
+    /* ── Selects row ── */
+    .selects-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 540px) { .selects-row { grid-template-columns: 1fr 1fr; } }
+
+    .select-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .select-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238c8680'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    .select-group select:focus { border-color: var(--accent); }
+
+    /* ── Generate button ── */
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232,160,32,0.4); }
+      50%       { box-shadow: 0 0 0 10px rgba(232,160,32,0); }
+    }
+    .gen-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #0d0c0b;
+      background: linear-gradient(90deg, var(--accent) 0%, #f5b942 40%, var(--accent) 100%);
+      background-size: 200% auto;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+      letter-spacing: 0.02em;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    .gen-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      animation: shimmer 1.5s linear infinite, pulse 2.5s ease-in-out infinite;
+    }
+    .gen-btn:active:not(:disabled) { transform: translateY(0); }
+    .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
+    .gen-btn .btn-inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-spin {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3); border-top-color: #0d0c0b;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    .error-bar {
+      margin-top: 12px;
+      background: rgba(224,91,50,0.1);
+      border: 1px solid rgba(224,91,50,0.4);
+      color: #e05b32;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      display: none;
+    }
+
     /* ── Hero ── */
     .hero {
       position: relative;
@@ -689,6 +773,51 @@
         </div>
       </div>
 
+      <!-- Generate card -->
+      <div class="card animate delay-4">
+        <div class="selects-row">
+          <div class="select-group">
+            <label>Cuisine</label>
+            <select id="cuisine">
+              <option value="any">Any</option>
+              <option value="italian">Italian</option>
+              <option value="mexican">Mexican</option>
+              <option value="asian">Asian</option>
+              <option value="mediterranean">Mediterranean</option>
+              <option value="american">American</option>
+              <option value="indian">Indian</option>
+              <option value="french">French</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <label>Difficulty</label>
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <label>Diet</label>
+            <select id="diet">
+              <option value="none">None</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="vegan">Vegan</option>
+              <option value="gluten-free">Gluten-free</option>
+              <option value="dairy-free">Dairy-free</option>
+              <option value="keto">Keto</option>
+            </select>
+          </div>
+        </div>
+        <button class="gen-btn" id="gen-btn" onclick="generateRecipe()">
+          <div class="btn-inner">
+            <span id="btn-txt">✨ Generate My Recipe</span>
+            <div class="btn-spin" id="btn-spin"></div>
+          </div>
+        </button>
+        <div class="error-bar" id="error-bar"></div>
+      </div>
+
       <!-- Dietary Goal Card -->
       <div class="card animate delay-1">
         <div class="card-title">🎯 Dietary Goal</div>
@@ -919,6 +1048,52 @@
       const inp = document.getElementById(ns+'-input');
       if (inp) inp.addEventListener('keydown', () => setTimeout(updateKitchenBadge, 50));
     });
+
+    // ── Generate ──
+    async function generateRecipe() {
+      if (!tagData.ing.length) { showError('Add at least one ingredient.'); return; }
+      showError('');
+      setGenLoading(true);
+      showLoading(true);
+      try {
+        const r = await fetch('/api/recipe', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ingredients: tagData.ing,
+            equipment:   tagData.equip,
+            seasonings:  tagData.season,
+            pantry:      tagData.pantry,
+            cuisine:     document.getElementById('cuisine').value,
+            difficulty:  document.getElementById('difficulty').value,
+            diet:        document.getElementById('diet').value,
+            dietary_goal: selectedGoal,
+          }),
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'Something went wrong.');
+        showLoading(false);
+        renderRecipe(d);
+        // Fire image generation async (added in later step)
+        generateDishImage(d.title, d.description || '');
+      } catch(err) {
+        showLoading(false);
+        showError(err.message);
+      } finally { setGenLoading(false); }
+    }
+    function setGenLoading(on) {
+      const btn = document.getElementById('gen-btn');
+      btn.disabled = on;
+      document.getElementById('btn-txt').style.display = on ? 'none' : 'inline';
+      document.getElementById('btn-spin').style.display = on ? 'inline-block' : 'none';
+    }
+    function showError(msg) {
+      const el = document.getElementById('error-bar');
+      el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+    }
+    // Stubs filled in later steps
+    function showLoading(on) {}
+    function renderRecipe(d) {}
+    function generateDishImage(title, desc) {}
 
     // ── Dietary goal selection ──
     let selectedGoal = 'balanced';
