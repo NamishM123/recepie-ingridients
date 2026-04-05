@@ -1677,11 +1677,6 @@
         `<div class="ing-row"><span class="ing-amount">${i.amount||''}</span><span class="ing-name">${i.name||''}</span></div>`
       ).join('');
 
-      const sec = document.getElementById('recipe-section');
-      sec.classList.remove('visible');
-      void sec.offsetWidth; // reflow
-      sec.classList.add('visible');
-      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
       // Steps
       const stepsEl = document.getElementById('r-steps');
       stepsEl.innerHTML = (d.steps || []).map((s, i) => {
