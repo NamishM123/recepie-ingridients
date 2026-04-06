@@ -1099,6 +1099,166 @@
     }
     .facts-ticker .fact-text.hidden { opacity: 0; }
 
+    /* ── Feed page ── */
+    .feed-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
+    }
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .feed-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .feed-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .feed-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+    .feed-card-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .feed-card-img-placeholder {
+      width: 100%; height: 180px;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--card-hover) 100%);
+      display: flex; align-items: center; justify-content: center; font-size: 52px;
+    }
+    .feed-card-body { padding: 16px 18px; }
+    .feed-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .feed-avatar { font-size: 20px; line-height: 1; }
+    .feed-author { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .feed-time { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+    .feed-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 8px; line-height: 1.3;
+    }
+    .feed-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .feed-badge {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 100px; padding: 3px 10px;
+      font-size: 11px; font-weight: 500; color: var(--text-secondary);
+    }
+    .feed-macros { display: flex; gap: 12px; font-size: 12px; color: var(--text-secondary); margin-bottom: 14px; }
+    .feed-macro-item strong { color: var(--text-primary); }
+    .feed-card-actions {
+      display: flex; align-items: center; gap: 10px;
+      border-top: 1px solid var(--border); padding-top: 12px;
+    }
+    .feed-like-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 14px;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .feed-like-btn:hover, .feed-like-btn.liked { border-color: #e05b32; color: #e05b32; background: rgba(224,91,50,0.08); }
+    .feed-view-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--accent); border: none; border-radius: 8px;
+      padding: 6px 16px; font-size: 13px; font-weight: 700;
+      color: #0d0c0b; cursor: pointer; margin-left: auto;
+      transition: background var(--transition);
+    }
+    .feed-view-btn:hover { background: var(--accent-hover); }
+    .feed-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 15px; }
+    .feed-empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+    /* ── Saved page ── */
+    .saved-inner { max-width: 700px; margin: 0 auto; padding: 20px 20px 60px; }
+    .saved-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
+      display: flex; align-items: flex-start; gap: 14px;
+      cursor: pointer; transition: border-color var(--transition), transform var(--transition);
+    }
+    .saved-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .saved-card-icon { font-size: 32px; flex-shrink: 0; }
+    .saved-card-body { flex: 1; min-width: 0; }
+    .saved-card-title {
+      font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .saved-card-sub { font-size: 12px; color: var(--text-secondary); }
+    .saved-card-del {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0;
+      transition: color var(--transition);
+    }
+    .saved-card-del:hover { color: #e05b32; }
+
+    /* ── Share modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 800;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      width: 100%; max-width: 440px; box-shadow: var(--shadow);
+    }
+    .modal-icon { font-size: 36px; margin-bottom: 12px; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label {
+      display: block; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 7px;
+    }
+    .modal-field input {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text-primary);
+      font-size: 14px; outline: none; transition: border-color var(--transition);
+    }
+    .modal-field input:focus { border-color: var(--accent); }
+    .modal-preview {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px;
+    }
+    .modal-preview-title { font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 3px; }
+    .modal-preview-sub { color: var(--text-secondary); font-size: 12px; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-cancel {
+      flex: 1; padding: 11px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); background: var(--surface);
+      color: var(--text-secondary); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .modal-cancel:hover { border-color: var(--accent); color: var(--accent); }
+    .modal-submit {
+      flex: 2; padding: 11px; border: none; border-radius: var(--radius-sm);
+      background: var(--accent); color: #0d0c0b;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: background var(--transition);
+    }
+    .modal-submit:hover:not(:disabled) { background: var(--accent-hover); }
+    .modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Hero logo ── */
+    .hero-logo-img {
+      width: 130px; height: 130px; object-fit: contain;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 24px rgba(232,160,32,0.35));
+      animation: floatBob 3s ease-in-out infinite;
+    }
+    @keyframes floatBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
     /* Hero CTA button */
     .hero-cta {
       position: relative;
@@ -1137,8 +1297,9 @@
   <!-- Header -->
   <header class="header">
     <div class="header-logo">
-      <span class="logo-icon">🍽️</span>
-      <span class="logo-name">Chef<span>AI</span></span>
+      <img src="/logo.png" style="height:34px;width:34px;object-fit:contain" alt="" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='inline'" />
+      <span id="logo-fallback" style="display:none;font-size:24px">🍽️</span>
+      <span class="logo-name">Ingredients<span> to Recipe</span></span>
     </div>
     <div class="header-actions">
       <button class="back-btn" id="back-btn" onclick="goToPage('page-input')">← Back</button>
@@ -1163,17 +1324,14 @@
 
   <!-- Mobile bottom nav -->
   <nav class="bottom-nav">
-    <div class="nav-item active" onclick="navTo('home', this)">
+    <div class="nav-item active" id="nav-home" onclick="navTo('home',this)">
       <span class="nav-icon">🏠</span>Home
     </div>
-    <div class="nav-item" onclick="navTo('saved', this)">
+    <div class="nav-item" id="nav-feed" onclick="navTo('feed',this)">
+      <span class="nav-icon">🌍</span>Community
+    </div>
+    <div class="nav-item" id="nav-saved" onclick="navTo('saved',this)">
       <span class="nav-icon">🔖</span>Saved
-    </div>
-    <div class="nav-item" onclick="navTo('macros', this)">
-      <span class="nav-icon">📊</span>Macros
-    </div>
-    <div class="nav-item" onclick="navTo('settings', this)">
-      <span class="nav-icon">⚙️</span>Settings
     </div>
   </nav>
 
@@ -1194,14 +1352,15 @@
       <span class="food-particle" style="left:90%; bottom:5%;  --dur:9s;  --delay:5s">🥕</span>
 
       <div class="hero-content">
+        <img src="/logo.png" class="hero-logo-img animate delay-1" alt="Ingredients to Recipe" onerror="this.style.display='none'" />
         <div class="hero-eyebrow animate delay-1">
           <span>✨</span> AI-Powered Personal Chef
         </div>
         <h1 class="hero-headline animate delay-2">
-          Tell me what's in<br/>your kitchen.<br/><em>I'll make you a meal.</em>
+          Tell me what's in<br/>your kitchen.<br/><em>I'll cook for you.</em>
         </h1>
         <p class="hero-sub animate delay-3">
-          List exactly what you have — every ingredient, spice, and condiment — and ChefAI crafts a recipe using <em>only</em> what you've got.
+          List every ingredient, spice &amp; condiment you have — we'll only cook with what's on your list.
         </p>
         <div class="hero-features animate delay-3">
           <span class="hero-feature">🥩 Meat &amp; Protein</span>
@@ -1543,11 +1702,56 @@
       <div class="action-row">
         <button class="action-btn primary" onclick="goToPage('page-input')">← New Recipe</button>
         <button class="action-btn" onclick="saveRecipe()">🔖 Save</button>
-        <button class="action-btn" onclick="shareRecipe()">↗ Share</button>
+        <button class="action-btn" onclick="openShareModal()">🌍 Post to Feed</button>
       </div>
 
     </div><!-- end recipe-inner -->
   </div><!-- end page-recipe -->
+
+  <!-- ── Page: Community Feed ── -->
+  <div id="page-feed" class="page page-below">
+    <div class="feed-inner">
+      <div class="feed-header">
+        <div class="feed-title">🌍 Community Feed</div>
+      </div>
+      <div id="feed-list">
+        <div class="feed-empty"><div class="feed-empty-icon">🍳</div>Loading recipes…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Page: Saved Recipes ── -->
+  <div id="page-saved" class="page page-below">
+    <div class="saved-inner">
+      <div class="feed-header">
+        <div class="feed-title">🔖 Saved Recipes</div>
+      </div>
+      <div id="saved-list">
+        <div class="feed-empty"><div class="feed-empty-icon">📭</div>No saved recipes yet.<br/>Generate a recipe and tap <strong>Save</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Share Modal ── -->
+  <div class="modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
+    <div class="modal">
+      <div class="modal-icon">🚀</div>
+      <div class="modal-title">Post to Community</div>
+      <div class="modal-sub">Share your AI-generated recipe with everyone!</div>
+      <div class="modal-field">
+        <label>Your chef name</label>
+        <input id="share-author-input" placeholder="e.g. Mike's Kitchen" maxlength="40" />
+      </div>
+      <div class="modal-preview" id="share-preview">
+        <div class="modal-preview-title" id="share-preview-title">—</div>
+        <div class="modal-preview-sub" id="share-preview-sub">—</div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" onclick="closeShareModal()">Cancel</button>
+        <button class="modal-submit" id="share-submit-btn" onclick="submitShareToFeed()">Share Recipe 🚀</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     // ── Theme ──
@@ -1942,15 +2146,14 @@
     function saveRecipe() {
       if (!window._lastRecipe) return;
       const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+      // avoid duplicates
+      const exists = saves.some(s => s.title === window._lastRecipe.title);
+      if (exists) { showToast('Already saved!', 'info'); return; }
       saves.unshift({ ...window._lastRecipe, savedAt: Date.now() });
-      localStorage.setItem('saved_recipes', JSON.stringify(saves.slice(0, 20)));
+      localStorage.setItem('saved_recipes', JSON.stringify(saves.slice(0, 50)));
       showToast('Recipe saved! 🔖', 'success');
     }
-    function navTo(page, el) {
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
-      if (page !== 'home') showToast('Coming soon!');
-    }
+    function _oldNavTo() {} // replaced by navTo at bottom of script
 
     function shareRecipe() {
       if (navigator.share && window._lastRecipe) {
@@ -1986,6 +2189,216 @@
       document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedGoal = btn.dataset.goal;
+    }
+
+    // ── Navigation (bottom nav) ──
+    function navTo(page, el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      if (el) el.classList.add('active');
+      if (page === 'home') {
+        goToPage('page-hero');
+      } else if (page === 'feed') {
+        showFeedPage();
+      } else if (page === 'saved') {
+        showSavedPage();
+      }
+    }
+
+    // ── Community Feed ──
+    const likedPosts = new Set(JSON.parse(localStorage.getItem('liked_posts') || '[]'));
+
+    function timeAgo(ts) {
+      const diff = Date.now() - ts;
+      const m = Math.floor(diff / 60000);
+      if (m < 60) return m <= 1 ? 'just now' : m + 'm ago';
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      return Math.floor(h / 24) + 'd ago';
+    }
+
+    function cuisineEmoji(c = '') {
+      const map = { italian:'🍝', thai:'🌶️', mexican:'🌮', asian:'🥢', mediterranean:'🫒', american:'🍔', indian:'🍛', french:'🥐' };
+      return map[c.toLowerCase()] || '🍽️';
+    }
+
+    function renderFeedCard(post) {
+      const n = post.nutrition || {};
+      const liked = likedPosts.has(post.id);
+      return `
+        <div class="feed-card" id="feedcard-${post.id}">
+          ${post.image_url
+            ? `<img class="feed-card-img" src="${post.image_url}" alt="${post.title}" loading="lazy" />`
+            : `<div class="feed-card-img-placeholder">${cuisineEmoji(post.cuisine_style)}</div>`}
+          <div class="feed-card-body">
+            <div class="feed-card-meta">
+              <span class="feed-avatar">${post.avatar || '🍳'}</span>
+              <span class="feed-author">${post.author || 'Anonymous'}</span>
+              <span class="feed-time">${timeAgo(post.postedAt)}</span>
+            </div>
+            <div class="feed-card-title">${post.title}</div>
+            <div class="feed-badges">
+              ${post.cuisine_style ? `<span class="feed-badge">🌍 ${post.cuisine_style}</span>` : ''}
+              ${post.difficulty ? `<span class="feed-badge">⚡ ${post.difficulty}</span>` : ''}
+              ${post.prep_time ? `<span class="feed-badge">⏱ ${post.prep_time} prep</span>` : ''}
+              ${post.dietary_goal_match ? `<span class="feed-badge">${post.dietary_goal_match}</span>` : ''}
+            </div>
+            ${n.calories ? `<div class="feed-macros">
+              <span class="feed-macro-item"><strong>${n.calories}</strong> kcal</span>
+              <span class="feed-macro-item"><strong>${n.protein || '?'}g</strong> protein</span>
+              <span class="feed-macro-item"><strong>${n.carbohydrates || '?'}g</strong> carbs</span>
+              <span class="feed-macro-item"><strong>${n.fat || '?'}g</strong> fat</span>
+            </div>` : ''}
+            <div class="feed-card-actions">
+              <button class="feed-like-btn ${liked ? 'liked' : ''}" onclick="likePost('${post.id}',this)">
+                ❤️ <span class="like-count">${post.likes || 0}</span>
+              </button>
+              <button class="feed-view-btn" onclick="viewFeedRecipe('${post.id}')">View Recipe →</button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    let feedCache = [];
+
+    async function showFeedPage() {
+      // Update page states
+      PAGE_ORDER.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-above'); }
+      });
+      ['page-feed','page-saved'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-below'); }
+      });
+      const feedPage = document.getElementById('page-feed');
+      feedPage.classList.remove('page-below'); feedPage.classList.add('page-active');
+      feedPage.scrollTop = 0;
+      document.getElementById('back-btn').classList.add('visible');
+      document.getElementById('back-btn').textContent = '← Home';
+      document.getElementById('back-btn').onclick = () => navTo('home', document.getElementById('nav-home'));
+
+      const list = document.getElementById('feed-list');
+      list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">⏳</div>Loading…</div>';
+      try {
+        const r = await fetch('/api/feed');
+        feedCache = await r.json();
+        if (!feedCache.length) {
+          list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">🍳</div>No community recipes yet.<br/>Generate a recipe and <strong>Post to Feed</strong>!</div>';
+        } else {
+          list.innerHTML = feedCache.map(renderFeedCard).join('');
+        }
+      } catch(e) {
+        list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">⚠️</div>Failed to load feed.</div>';
+      }
+    }
+
+    async function likePost(id, btn) {
+      if (likedPosts.has(id)) return;
+      likedPosts.add(id);
+      localStorage.setItem('liked_posts', JSON.stringify([...likedPosts]));
+      btn.classList.add('liked');
+      try {
+        const r = await fetch(`/api/feed/${id}/like`, { method: 'POST' });
+        const d = await r.json();
+        btn.querySelector('.like-count').textContent = d.likes;
+      } catch(e) {}
+    }
+
+    function viewFeedRecipe(id) {
+      const post = feedCache.find(p => p.id === id);
+      if (!post) return;
+      renderRecipe(post);
+      // override back button to return to feed
+      setTimeout(() => {
+        document.getElementById('back-btn').textContent = '← Community';
+        document.getElementById('back-btn').onclick = () => navTo('feed', document.getElementById('nav-feed'));
+      }, 100);
+    }
+
+    // ── Saved Recipes Page ──
+    function showSavedPage() {
+      PAGE_ORDER.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-above'); }
+      });
+      ['page-feed','page-saved'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-below'); }
+      });
+      const savedPage = document.getElementById('page-saved');
+      savedPage.classList.remove('page-below'); savedPage.classList.add('page-active');
+      savedPage.scrollTop = 0;
+      document.getElementById('back-btn').classList.add('visible');
+      document.getElementById('back-btn').textContent = '← Home';
+      document.getElementById('back-btn').onclick = () => navTo('home', document.getElementById('nav-home'));
+
+      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+      const list = document.getElementById('saved-list');
+      if (!saves.length) {
+        list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">📭</div>No saved recipes yet.<br/>Generate a recipe and tap <strong>🔖 Save</strong>.</div>';
+        return;
+      }
+      list.innerHTML = saves.map((r, i) => `
+        <div class="saved-card" onclick="viewSavedRecipe(${i})">
+          <div class="saved-card-icon">${cuisineEmoji(r.cuisine_style)}</div>
+          <div class="saved-card-body">
+            <div class="saved-card-title">${r.title}</div>
+            <div class="saved-card-sub">${r.cuisine_style || ''} · ${r.difficulty || ''} · ${(r.nutrition||{}).calories||'?'} kcal</div>
+          </div>
+          <button class="saved-card-del" onclick="event.stopPropagation();deleteSaved(${i})">🗑</button>
+        </div>`).join('');
+    }
+
+    function viewSavedRecipe(i) {
+      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+      if (!saves[i]) return;
+      renderRecipe(saves[i]);
+      setTimeout(() => {
+        document.getElementById('back-btn').textContent = '← Saved';
+        document.getElementById('back-btn').onclick = () => navTo('saved', document.getElementById('nav-saved'));
+      }, 100);
+    }
+
+    function deleteSaved(i) {
+      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+      saves.splice(i, 1);
+      localStorage.setItem('saved_recipes', JSON.stringify(saves));
+      showSavedPage();
+      showToast('Recipe removed.', 'info');
+    }
+
+    // ── Share to Community Feed ──
+    function openShareModal() {
+      if (!window._lastRecipe) { showToast('Generate a recipe first!', 'error'); return; }
+      const r = window._lastRecipe;
+      document.getElementById('share-preview-title').textContent = r.title || 'Untitled';
+      document.getElementById('share-preview-sub').textContent =
+        [r.cuisine_style, r.difficulty, (r.nutrition||{}).calories ? (r.nutrition.calories + ' kcal') : ''].filter(Boolean).join(' · ');
+      document.getElementById('share-modal').classList.add('open');
+    }
+
+    function closeShareModal() {
+      document.getElementById('share-modal').classList.remove('open');
+    }
+
+    async function submitShareToFeed() {
+      const author = document.getElementById('share-author-input').value.trim() || 'Anonymous Chef';
+      const btn = document.getElementById('share-submit-btn');
+      btn.disabled = true; btn.textContent = 'Posting…';
+      try {
+        const r = await fetch('/api/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipe: window._lastRecipe, author, avatar: '🍳' }),
+        });
+        if (!r.ok) throw new Error('Failed to post.');
+        closeShareModal();
+        showToast('Recipe posted to community! 🚀', 'success');
+      } catch(e) {
+        showToast('Failed to post. Try again.', 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Share Recipe 🚀';
+      }
     }
   </script>
 </body>
