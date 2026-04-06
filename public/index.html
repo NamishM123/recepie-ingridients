@@ -984,6 +984,72 @@
     /* ── Selection color ── */
     ::selection { background: var(--accent-dim); color: var(--accent); }
 
+    /* ── Section intro ── */
+    .section-intro {
+      text-align: center;
+      padding: 10px 4px 4px;
+    }
+    .section-intro-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .section-intro-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Floating food particles on hero ── */
+    .food-particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      font-size: 28px;
+      opacity: 0;
+      animation: floatUp var(--dur, 8s) var(--delay, 0s) ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 0;   transform: translateY(0)   rotate(0deg); }
+      10%  { opacity: 0.25; }
+      80%  { opacity: 0.18; transform: translateY(-55vh) rotate(30deg); }
+      100% { opacity: 0;   transform: translateY(-70vh) rotate(40deg); }
+    }
+
+    /* ── Typewriter cursor ── */
+    .cursor-blink {
+      display: inline-block;
+      width: 3px;
+      height: 0.9em;
+      background: var(--accent);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    /* ── Hero feature pills ── */
+    .hero-features {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .hero-feature {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
     /* ── Entrance animations ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(28px); }
@@ -1116,6 +1182,17 @@
     <section class="hero">
       <div class="hero-bg"></div>
       <div class="hero-glow"></div>
+
+      <!-- Floating food particles -->
+      <span class="food-particle" style="left:8%;  bottom:5%;  --dur:9s;  --delay:0s">🥩</span>
+      <span class="food-particle" style="left:18%; bottom:5%;  --dur:11s; --delay:2s">🧄</span>
+      <span class="food-particle" style="left:30%; bottom:5%;  --dur:8s;  --delay:4s">🌶️</span>
+      <span class="food-particle" style="left:44%; bottom:5%;  --dur:13s; --delay:1s">🥦</span>
+      <span class="food-particle" style="left:58%; bottom:5%;  --dur:10s; --delay:3s">🍋</span>
+      <span class="food-particle" style="left:70%; bottom:5%;  --dur:7s;  --delay:0.5s">🧅</span>
+      <span class="food-particle" style="left:80%; bottom:5%;  --dur:12s; --delay:2.5s">🍅</span>
+      <span class="food-particle" style="left:90%; bottom:5%;  --dur:9s;  --delay:5s">🥕</span>
+
       <div class="hero-content">
         <div class="hero-eyebrow animate delay-1">
           <span>✨</span> AI-Powered Personal Chef
@@ -1124,8 +1201,16 @@
           Tell me what's in<br/>your kitchen.<br/><em>I'll make you a meal.</em>
         </h1>
         <p class="hero-sub animate delay-3">
-          Add your ingredients, equipment, and dietary goal — ChefAI builds you a personalized recipe with full macros in seconds.
+          List exactly what you have — every ingredient, spice, and condiment — and ChefAI crafts a recipe using <em>only</em> what you've got.
         </p>
+        <div class="hero-features animate delay-3">
+          <span class="hero-feature">🥩 Meat &amp; Protein</span>
+          <span class="hero-feature">🥦 Vegetables</span>
+          <span class="hero-feature">🌶️ Spices</span>
+          <span class="hero-feature">🧈 Dairy</span>
+          <span class="hero-feature">🌾 Grains</span>
+          <span class="hero-feature">📷 Photo scan</span>
+        </div>
         <button class="hero-cta animate delay-4" onclick="goToPage('page-input')">
           Let's Cook <span class="cta-arrow">→</span>
         </button>
@@ -1145,43 +1230,159 @@
     <!-- ── Input Section ── -->
     <div class="input-section" id="input-section">
 
-      <!-- Ingredients Card -->
+      <!-- Section header -->
+      <div class="section-intro animate delay-1">
+        <div class="section-intro-title">What do you have?</div>
+        <div class="section-intro-sub">Tell me exactly what's available — I'll only cook with what you list.</div>
+      </div>
+
+      <!-- Meat & Protein Card -->
       <div class="card animate delay-2">
         <div class="field-row">
-          <div class="field-label">🥕 Ingredients</div>
-          <button class="scan-btn" id="ing-scan-btn" onclick="document.getElementById('ing-img-input').click()">
-            <span>📷</span>
-            <span id="ing-scan-txt">Scan photo</span>
-            <div class="mini-spin" id="ing-spin"></div>
+          <div class="field-label">🥩 Meat &amp; Protein</div>
+          <button class="scan-btn" id="meat-scan-btn" onclick="document.getElementById('meat-img-input').click()">
+            <span>📷</span><span id="meat-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="meat-spin"></div>
           </button>
         </div>
-        <input type="file" id="ing-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleIngImage(event)" />
-        <div class="tag-field" id="ing-field" onclick="document.getElementById('ing-input').focus()">
-          <input id="ing-input" placeholder="e.g. chicken breast, garlic… press Enter" autocomplete="off" />
+        <input type="file" id="meat-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('meat',event)" />
+        <div class="tag-field" id="meat-field" onclick="document.getElementById('meat-input').focus()">
+          <input id="meat-input" placeholder="e.g. chicken breast, salmon, eggs… press Enter" autocomplete="off" />
         </div>
-        <div class="img-preview-wrap" id="ing-preview-wrap">
-          <img id="ing-preview" alt="" />
-          <button class="x-btn" onclick="clearPreview('ing')">×</button>
+        <div class="img-preview-wrap" id="meat-preview-wrap">
+          <img id="meat-preview" alt="" />
+          <button class="x-btn" onclick="clearPreview('meat')">×</button>
         </div>
-        <p class="hint">Press Enter or comma after each ingredient. Or scan a photo.</p>
+        <div class="chips-row" id="meat-chips"></div>
+      </div>
+
+      <!-- Vegetables Card -->
+      <div class="card animate delay-2">
+        <div class="field-row">
+          <div class="field-label">🥦 Vegetables</div>
+          <button class="scan-btn" id="veg-scan-btn" onclick="document.getElementById('veg-img-input').click()">
+            <span>📷</span><span id="veg-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="veg-spin"></div>
+          </button>
+        </div>
+        <input type="file" id="veg-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('veg',event)" />
+        <div class="tag-field" id="veg-field" onclick="document.getElementById('veg-input').focus()">
+          <input id="veg-input" placeholder="e.g. onion, garlic, spinach… press Enter" autocomplete="off" />
+        </div>
+        <div class="img-preview-wrap" id="veg-preview-wrap">
+          <img id="veg-preview" alt="" />
+          <button class="x-btn" onclick="clearPreview('veg')">×</button>
+        </div>
+        <div class="chips-row" id="veg-chips"></div>
+      </div>
+
+      <!-- Fruits Card -->
+      <div class="card animate delay-2">
+        <div class="field-row">
+          <div class="field-label">🍎 Fruits</div>
+          <button class="scan-btn" id="fruit-scan-btn" onclick="document.getElementById('fruit-img-input').click()">
+            <span>📷</span><span id="fruit-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="fruit-spin"></div>
+          </button>
+        </div>
+        <input type="file" id="fruit-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('fruit',event)" />
+        <div class="tag-field" id="fruit-field" onclick="document.getElementById('fruit-input').focus()">
+          <input id="fruit-input" placeholder="e.g. lemon, apple, avocado… press Enter" autocomplete="off" />
+        </div>
+        <div class="chips-row" id="fruit-chips"></div>
+      </div>
+
+      <!-- Dairy & Grains Card -->
+      <div class="card animate delay-3">
+        <div class="field-row">
+          <div class="field-label">🧈 Dairy &amp; Fats</div>
+          <button class="scan-btn" id="dairy-scan-btn" onclick="document.getElementById('dairy-img-input').click()">
+            <span>📷</span><span id="dairy-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="dairy-spin"></div>
+          </button>
+        </div>
+        <input type="file" id="dairy-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('dairy',event)" />
+        <div class="tag-field" id="dairy-field" onclick="document.getElementById('dairy-input').focus()">
+          <input id="dairy-input" placeholder="e.g. butter, milk, cheddar… press Enter" autocomplete="off" />
+        </div>
+        <div class="img-preview-wrap" id="dairy-preview-wrap">
+          <img id="dairy-preview" alt="" />
+          <button class="x-btn" onclick="clearPreview('dairy')">×</button>
+        </div>
+        <div class="chips-row" id="dairy-chips"></div>
+
+        <hr class="divider" style="margin:18px 0" />
+
+        <div class="field-row" style="margin-bottom:10px">
+          <div class="field-label">🌾 Grains &amp; Carbs</div>
+          <button class="scan-btn" id="grains-scan-btn" onclick="document.getElementById('grains-img-input').click()">
+            <span>📷</span><span id="grains-scan-txt">Scan photo</span>
+            <div class="mini-spin" id="grains-spin"></div>
+          </button>
+        </div>
+        <input type="file" id="grains-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('grains',event)" />
+        <div class="tag-field" id="grains-field" onclick="document.getElementById('grains-input').focus()">
+          <input id="grains-input" placeholder="e.g. rice, pasta, bread… press Enter" autocomplete="off" />
+        </div>
+        <div class="chips-row" id="grains-chips"></div>
       </div>
 
       <!-- Kitchen Setup Card -->
       <div class="card animate delay-3">
-        <div class="collapsible-header" id="kitchen-hdr" onclick="toggleKitchen()">
+        <div class="collapsible-header open" id="kitchen-hdr" onclick="toggleKitchen()">
           <div class="card-title" style="margin:0">
             🏠 Kitchen Setup
             <span class="kitchen-badge" id="kitchen-badge" style="display:none">0 items</span>
           </div>
-          <span class="chev" id="kitchen-chev">▼</span>
+          <span class="chev open" id="kitchen-chev">▼</span>
         </div>
-        <div class="collapsible-body" id="kitchen-body">
+        <div class="collapsible-body open" id="kitchen-body">
           <div class="kitchen-sections">
+
+            <!-- Seasonings & Spices (top — most impactful) -->
+            <div>
+              <div class="field-row">
+                <div class="field-label">🌶️ Spices &amp; Seasonings</div>
+                <button class="scan-btn" id="season-scan-btn" onclick="document.getElementById('season-img-input').click()">
+                  <span>📷</span><span id="season-scan-txt">Scan spice rack</span>
+                  <div class="mini-spin" id="season-spin"></div>
+                </button>
+              </div>
+              <input type="file" id="season-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('season',event)" />
+              <div class="tag-field" id="season-field" onclick="document.getElementById('season-input').focus()">
+                <input id="season-input" placeholder="Add spices &amp; seasonings…" autocomplete="off" />
+              </div>
+              <div class="img-preview-wrap" id="season-preview-wrap">
+                <img id="season-preview" alt="" />
+                <button class="x-btn" onclick="clearPreview('season')">×</button>
+              </div>
+              <div class="chips-row" id="season-chips"></div>
+            </div>
+
+            <hr class="divider" />
+
+            <!-- Pantry -->
+            <div>
+              <div class="field-row">
+                <div class="field-label">🫙 Pantry &amp; Condiments</div>
+                <button class="scan-btn" id="pantry-scan-btn" onclick="document.getElementById('pantry-img-input').click()">
+                  <span>📷</span><span id="pantry-scan-txt">Scan pantry</span>
+                  <div class="mini-spin" id="pantry-spin"></div>
+                </button>
+              </div>
+              <input type="file" id="pantry-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('pantry',event)" />
+              <div class="tag-field" id="pantry-field" onclick="document.getElementById('pantry-input').focus()">
+                <input id="pantry-input" placeholder="e.g. soy sauce, vinegar, canned tomatoes…" autocomplete="off" />
+              </div>
+              <div class="chips-row" id="pantry-chips"></div>
+            </div>
+
+            <hr class="divider" />
 
             <!-- Equipment -->
             <div>
               <div class="field-row">
-                <div class="field-label">🍳 Equipment</div>
+                <div class="field-label">🍳 Cooking Equipment</div>
                 <button class="scan-btn" id="equip-scan-btn" onclick="document.getElementById('equip-img-input').click()">
                   <span>📷</span><span id="equip-scan-txt">Scan kitchen</span>
                   <div class="mini-spin" id="equip-spin"></div>
@@ -1196,28 +1397,6 @@
                 <button class="x-btn" onclick="clearPreview('equip')">×</button>
               </div>
               <div class="chips-row" id="equip-chips"></div>
-            </div>
-
-            <hr class="divider" />
-
-            <!-- Seasonings -->
-            <div>
-              <div class="field-label" style="margin-bottom:10px">🧂 Seasonings &amp; Spices</div>
-              <div class="tag-field" id="season-field" onclick="document.getElementById('season-input').focus()">
-                <input id="season-input" placeholder="Add seasonings…" autocomplete="off" />
-              </div>
-              <div class="chips-row" id="season-chips"></div>
-            </div>
-
-            <hr class="divider" />
-
-            <!-- Pantry -->
-            <div>
-              <div class="field-label" style="margin-bottom:10px">🫙 Pantry Staples</div>
-              <div class="tag-field" id="pantry-field" onclick="document.getElementById('pantry-input').focus()">
-                <input id="pantry-input" placeholder="e.g. olive oil, flour, eggs…" autocomplete="off" />
-              </div>
-              <div class="chips-row" id="pantry-chips"></div>
             </div>
 
           </div>
@@ -1445,7 +1624,8 @@
     }
 
     // ── Generic tag system ──
-    const tagData = { ing: [], equip: [], season: [], pantry: [] };
+    const FOOD_NS = ['meat','veg','fruit','dairy','grains'];
+    const tagData = { meat:[], veg:[], fruit:[], dairy:[], grains:[], equip:[], season:[], pantry:[] };
 
     function addTag(ns, val) {
       val = val.trim().toLowerCase().replace(/,+$/, '');
@@ -1462,9 +1642,10 @@
       if (!field) return;
       field.querySelectorAll('.pill').forEach(p => p.remove());
       const inp = document.getElementById(ns + '-input');
+      const isDark = FOOD_NS.includes(ns);
       tagData[ns].forEach((t, i) => {
         const pill = document.createElement('div');
-        pill.className = 'pill ' + (ns === 'ing' ? 'dark' : 'light');
+        pill.className = 'pill ' + (isDark ? 'dark' : 'light');
         pill.innerHTML = `${t}<button onclick="removeTag('${ns}',${i})">×</button>`;
         field.insertBefore(pill, inp);
       });
@@ -1476,38 +1657,44 @@
         if (e.key === 'Enter' || e.key === ',') {
           e.preventDefault();
           addTag(ns, inp.value); inp.value = '';
+          if (['equip','season','pantry'].includes(ns)) updateKitchenBadge();
         } else if (e.key === 'Backspace' && !inp.value && tagData[ns].length) {
           tagData[ns].pop(); renderTags(ns);
+          if (['equip','season','pantry'].includes(ns)) updateKitchenBadge();
         }
       });
     }
-    initTagInput('ing');
 
-    // Scan ingredient image
-    async function handleIngImage(e) {
+    // Generic food photo scan (reuses /api/scan for all food categories)
+    async function handleFoodScan(ns, e) {
       const file = e.target.files[0]; if (!file) return;
       const dataUrl = await readFile(file);
-      document.getElementById('ing-preview').src = dataUrl;
-      document.getElementById('ing-preview-wrap').style.display = 'block';
-      setScanLoading('ing', true);
+      const previewWrap = document.getElementById(ns+'-preview-wrap');
+      const previewImg  = document.getElementById(ns+'-preview');
+      if (previewWrap && previewImg) { previewImg.src = dataUrl; previewWrap.style.display = 'block'; }
+      setScanLoading(ns, true);
       try {
         const r = await fetch('/api/scan', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ image: dataUrl }) });
         const d = await r.json();
         if (!r.ok) throw new Error(d.error);
-        d.ingredients.forEach(i => addTag('ing', i));
+        d.ingredients.forEach(i => addTag(ns, i));
+        if (['equip','season','pantry'].includes(ns)) updateKitchenBadge();
       } catch(err) { showToast(err.message, 'error'); }
-      finally { setScanLoading('ing', false); e.target.value = ''; }
+      finally { setScanLoading(ns, false); e.target.value = ''; }
     }
+
     function clearPreview(ns) {
-      document.getElementById(ns+'-preview-wrap').style.display = 'none';
-      document.getElementById(ns+'-preview').src = '';
+      const w = document.getElementById(ns+'-preview-wrap');
+      const i = document.getElementById(ns+'-preview');
+      if (w) w.style.display = 'none';
+      if (i) i.src = '';
     }
     function setScanLoading(ns, on) {
       const btn = document.getElementById(ns+'-scan-btn');
       const txt = document.getElementById(ns+'-scan-txt');
       const sp  = document.getElementById(ns+'-spin');
       if (btn) btn.disabled = on;
-      if (txt) txt.textContent = on ? 'Scanning…' : (ns === 'equip' ? 'Scan kitchen' : 'Scan photo');
+      if (txt) txt.textContent = on ? 'Scanning…' : txt.dataset.orig || txt.textContent;
       if (sp)  sp.style.display = on ? 'block' : 'none';
     }
     function readFile(f) {
@@ -1526,10 +1713,17 @@
       setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3500);
     }
 
+    // ── Ingredient chip presets ──
+    const MEAT_CHIPS    = ['chicken breast','chicken thigh','ground beef','steak','salmon','tuna','shrimp','pork chop','bacon','lamb','turkey','tofu','tempeh','chickpeas','lentils','black beans','eggs'];
+    const VEG_CHIPS     = ['onion','garlic','tomatoes','spinach','broccoli','carrot','bell pepper','mushrooms','zucchini','celery','cabbage','kale','corn','peas','eggplant','cucumber','potato','sweet potato'];
+    const FRUIT_CHIPS   = ['lemon','lime','orange','apple','banana','avocado','strawberries','blueberries','mango','pineapple','grapes','tomato','jalapeño'];
+    const DAIRY_CHIPS   = ['butter','whole milk','heavy cream','cheddar cheese','mozzarella','parmesan','yogurt','sour cream','cream cheese','feta','olive oil','vegetable oil','coconut oil','ghee'];
+    const GRAINS_CHIPS  = ['white rice','brown rice','pasta','spaghetti','bread','flour','oats','quinoa','potatoes','noodles','tortillas','bread crumbs','couscous','barley'];
+
     // ── Kitchen setup ──
     const EQUIP_CHIPS   = ['oven','stovetop','air fryer','microwave','blender','food processor','wok','cast iron pan','instant pot','slow cooker','grill','stand mixer','rice cooker','toaster oven'];
-    const SEASON_CHIPS  = ['salt','black pepper','garlic powder','onion powder','paprika','cumin','chili flakes','oregano','thyme','rosemary','cayenne','turmeric','cinnamon','soy sauce','hot sauce','fish sauce'];
-    const PANTRY_CHIPS  = ['olive oil','vegetable oil','butter','flour','sugar','eggs','milk','heavy cream','chicken broth','canned tomatoes','rice','pasta','bread crumbs','honey','vinegar'];
+    const SEASON_CHIPS  = ['salt','black pepper','garlic powder','onion powder','paprika','cumin','chili flakes','oregano','thyme','rosemary','cayenne','turmeric','cinnamon','coriander','bay leaves','dried basil','ginger powder'];
+    const PANTRY_CHIPS  = ['soy sauce','hot sauce','fish sauce','worcestershire','oyster sauce','tomato paste','canned tomatoes','chicken broth','beef broth','honey','vinegar','lemon juice','coconut milk','tahini','mustard','ketchup'];
 
     function buildChips(containerId, items, ns) {
       const c = document.getElementById(containerId);
@@ -1559,11 +1753,12 @@
       badge.textContent = total + ' item' + (total !== 1 ? 's' : '');
     }
 
-    let kitchenOpen = false;
+    let kitchenOpen = true;
     function toggleKitchen() {
       kitchenOpen = !kitchenOpen;
       document.getElementById('kitchen-body').classList.toggle('open', kitchenOpen);
       document.getElementById('kitchen-hdr').classList.toggle('open', kitchenOpen);
+      document.getElementById('kitchen-chev').classList.toggle('open', kitchenOpen);
     }
 
     async function handleEquipImage(e) {
@@ -1579,27 +1774,33 @@
         d.equipment.forEach(eq => { if (!tagData.equip.includes(eq)) { tagData.equip.push(eq); } });
         renderTags('equip');
         updateKitchenBadge();
+        // Also sync chips
+        document.querySelectorAll('#equip-chips .chip').forEach(ch => {
+          ch.classList.toggle('on', tagData.equip.includes(ch.textContent));
+        });
       } catch(err) { showToast(err.message, 'error'); }
       finally { setScanLoading('equip', false); e.target.value = ''; }
     }
 
-    // Init tag inputs + chips
-    ['equip','season','pantry'].forEach(ns => {
-      initTagInput(ns);
-    });
+    // Init tag inputs + chips for all namespaces
+    ['meat','veg','fruit','dairy','grains','equip','season','pantry'].forEach(ns => initTagInput(ns));
+
+    buildChips('meat-chips',   MEAT_CHIPS,   'meat');
+    buildChips('veg-chips',    VEG_CHIPS,    'veg');
+    buildChips('fruit-chips',  FRUIT_CHIPS,  'fruit');
+    buildChips('dairy-chips',  DAIRY_CHIPS,  'dairy');
+    buildChips('grains-chips', GRAINS_CHIPS, 'grains');
     buildChips('equip-chips',  EQUIP_CHIPS,  'equip');
     buildChips('season-chips', SEASON_CHIPS, 'season');
     buildChips('pantry-chips', PANTRY_CHIPS, 'pantry');
 
-    // Sync badge after any change via tag input
-    ['equip','season','pantry'].forEach(ns => {
-      const inp = document.getElementById(ns+'-input');
-      if (inp) inp.addEventListener('keydown', () => setTimeout(updateKitchenBadge, 50));
-    });
-
     // ── Generate ──
     async function generateRecipe() {
-      if (!tagData.ing.length) { showError('Add at least one ingredient.'); return; }
+      const allIngredients = [
+        ...tagData.meat, ...tagData.veg, ...tagData.fruit,
+        ...tagData.dairy, ...tagData.grains,
+      ];
+      if (!allIngredients.length) { showError('Add at least one ingredient (meat, veg, fruit, dairy, or grains).'); return; }
       showError('');
       setGenLoading(true);
       showLoading(true);
@@ -1607,7 +1808,7 @@
         const r = await fetch('/api/recipe', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            ingredients: tagData.ing,
+            ingredients: allIngredients,
             equipment:   tagData.equip,
             seasonings:  tagData.season,
             pantry:      tagData.pantry,

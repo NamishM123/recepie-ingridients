@@ -36,9 +36,10 @@ function buildRecipePrompt({ ingredients, equipment, seasonings, pantry, cuisine
     : '';
 
   return {
-    system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored exactly to what the user has available and their dietary goals. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates.`,
-    user: `Ingredients available: ${ingredients.join(', ')}${kitchenCtx}
+    system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored EXACTLY to what the user has available. CRITICAL RULES: (1) ONLY use ingredients the user explicitly listed — do NOT add, substitute, or assume any ingredient not on their list. (2) If an ingredient would improve the dish but wasn't listed, put it in missing_optional — never sneak it into the recipe. (3) Work creatively within the constraint of only what was provided. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates.`,
+    user: `Ingredients I have: ${ingredients.join(', ')}${kitchenCtx}
 
+IMPORTANT: Build the recipe using ONLY the ingredients listed above. Do not use anything else.
 ${goalPart}
 Difficulty: ${diffPart}${cuisinePart}${dietPart ? ', diet: ' + dietPart : ''}
 
