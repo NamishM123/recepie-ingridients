@@ -1804,25 +1804,30 @@
 
     // ── Page navigation ──
     const PAGE_ORDER = ['page-hero', 'page-input', 'page-recipe'];
+    const ALL_PAGES   = ['page-hero', 'page-input', 'page-recipe', 'page-feed', 'page-saved'];
+
+    function setPageClass(id, cls) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('page-active', 'page-above', 'page-below');
+      el.classList.add(cls);
+      if (cls === 'page-active') el.scrollTop = 0;
+    }
 
     function goToPage(targetId) {
       const targetIdx = PAGE_ORDER.indexOf(targetId);
+      // hide non-main pages
+      ['page-feed','page-saved'].forEach(id => setPageClass(id, 'page-below'));
+      // set main pages
       PAGE_ORDER.forEach((id, i) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.classList.remove('page-active', 'page-above', 'page-below');
-        if (i === targetIdx) {
-          el.classList.add('page-active');
-          el.scrollTop = 0;
-        } else {
-          el.classList.add(i < targetIdx ? 'page-above' : 'page-below');
-        }
+        setPageClass(id, i === targetIdx ? 'page-active' : i < targetIdx ? 'page-above' : 'page-below');
       });
-
-      // Back button: hidden on hero, visible elsewhere
+      // nav highlight
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('nav-home')?.classList.add('active');
+      // Back button
       const backBtn = document.getElementById('back-btn');
       backBtn.classList.toggle('visible', targetId !== 'page-hero');
-      // Label: "← Ingredients" from recipe, "← Home" from input
       backBtn.textContent = targetId === 'page-recipe' ? '← Ingredients' : '← Home';
       backBtn.onclick = () => goToPage(PAGE_ORDER[targetIdx - 1]);
     }
@@ -2260,22 +2265,16 @@
 
     let feedCache = [];
 
+    function switchToOverlayPage(pageId, backLabel, backPage, backNavId) {
+      ALL_PAGES.forEach(id => setPageClass(id, id === pageId ? 'page-active' : 'page-below'));
+      const backBtn = document.getElementById('back-btn');
+      backBtn.classList.add('visible');
+      backBtn.textContent = backLabel;
+      backBtn.onclick = () => navTo(backPage, document.getElementById(backNavId));
+    }
+
     async function showFeedPage() {
-      // Update page states
-      PAGE_ORDER.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-above'); }
-      });
-      ['page-feed','page-saved'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-below'); }
-      });
-      const feedPage = document.getElementById('page-feed');
-      feedPage.classList.remove('page-below'); feedPage.classList.add('page-active');
-      feedPage.scrollTop = 0;
-      document.getElementById('back-btn').classList.add('visible');
-      document.getElementById('back-btn').textContent = '← Home';
-      document.getElementById('back-btn').onclick = () => navTo('home', document.getElementById('nav-home'));
+      switchToOverlayPage('page-feed', '← Home', 'home', 'nav-home');
 
       const list = document.getElementById('feed-list');
       list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">⏳</div>Loading…</div>';
@@ -2308,29 +2307,14 @@
       const post = feedCache.find(p => p.id === id);
       if (!post) return;
       renderRecipe(post);
-      // override back button to return to feed
-      setTimeout(() => {
-        document.getElementById('back-btn').textContent = '← Community';
-        document.getElementById('back-btn').onclick = () => navTo('feed', document.getElementById('nav-feed'));
-      }, 100);
+      const backBtn = document.getElementById('back-btn');
+      backBtn.textContent = '← Community';
+      backBtn.onclick = () => navTo('feed', document.getElementById('nav-feed'));
     }
 
     // ── Saved Recipes Page ──
     function showSavedPage() {
-      PAGE_ORDER.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-above'); }
-      });
-      ['page-feed','page-saved'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('page-active','page-above','page-below'); el.classList.add('page-below'); }
-      });
-      const savedPage = document.getElementById('page-saved');
-      savedPage.classList.remove('page-below'); savedPage.classList.add('page-active');
-      savedPage.scrollTop = 0;
-      document.getElementById('back-btn').classList.add('visible');
-      document.getElementById('back-btn').textContent = '← Home';
-      document.getElementById('back-btn').onclick = () => navTo('home', document.getElementById('nav-home'));
+      switchToOverlayPage('page-saved', '← Home', 'home', 'nav-home');
 
       const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
       const list = document.getElementById('saved-list');
@@ -2353,10 +2337,9 @@
       const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
       if (!saves[i]) return;
       renderRecipe(saves[i]);
-      setTimeout(() => {
-        document.getElementById('back-btn').textContent = '← Saved';
-        document.getElementById('back-btn').onclick = () => navTo('saved', document.getElementById('nav-saved'));
-      }, 100);
+      const backBtn = document.getElementById('back-btn');
+      backBtn.textContent = '← Saved';
+      backBtn.onclick = () => navTo('saved', document.getElementById('nav-saved'));
     }
 
     function deleteSaved(i) {
