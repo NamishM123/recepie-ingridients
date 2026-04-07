@@ -36,10 +36,10 @@ function buildRecipePrompt({ ingredients, equipment, seasonings, pantry, cuisine
     : '';
 
   return {
-    system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored EXACTLY to what the user has available. CRITICAL RULES: (1) ONLY use ingredients the user explicitly listed — do NOT add, substitute, or assume any ingredient not on their list. (2) If an ingredient would improve the dish but wasn't listed, put it in missing_optional — never sneak it into the recipe. (3) Work creatively within the constraint of only what was provided. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates.`,
-    user: `Ingredients I have (quantities included where specified — use them for accurate macro calculation): ${ingredients.join(', ')}${kitchenCtx}
+    system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored to what the user has available. CRITICAL RULES: (1) Choose the BEST subset of the user's ingredients to make a great dish — you do NOT need to use every ingredient listed. Pick what makes culinary sense. (2) Only use ingredients the user explicitly listed — do NOT add or assume any ingredient not on their list. (3) If an ingredient would improve the dish but wasn't listed, put it in missing_optional — never sneak it into the recipe. (4) Work creatively within the constraint of what was provided. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates based on the quantities specified.`,
+    user: `Ingredients available (quantities included where specified — use them for accurate macro calculation): ${ingredients.join(', ')}${kitchenCtx}
 
-IMPORTANT: Build the recipe using ONLY the ingredients listed above. Do not use anything else.
+IMPORTANT: Pick the best combination from the list above to make a great dish. You don't need to use every ingredient — only use what makes the recipe taste good. Do NOT use anything not on this list.
 ${goalPart}
 Difficulty: ${diffPart}${cuisinePart}${dietPart ? ', diet: ' + dietPart : ''}
 
