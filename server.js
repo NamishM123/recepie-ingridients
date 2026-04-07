@@ -150,17 +150,36 @@ app.post('/api/recipe', async (req, res) => {
   }
 });
 
-// Generate dish image via DALL-E 3
+// Generate dish image — Unsplash first (instant), DALL-E 2 fallback
 app.post('/api/generate-image', async (req, res) => {
   const { title, description } = req.body;
   if (!title) return res.status(400).json({ error: 'Title required.' });
+
+  // ── Try Unsplash first (instant real food photography) ──
+  if (process.env.UNSPLASH_ACCESS_KEY) {
+    try {
+      const query = encodeURIComponent(title + ' food dish');
+      const r = await fetch(
+        `https://api.unsplash.com/search/photos?query=${query}&orientation=landscape&per_page=3&order_by=relevant`,
+        { headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } }
+      );
+      const data = await r.json();
+      const photo = data.results?.[0];
+      if (photo?.urls?.regular) {
+        return res.json({ url: photo.urls.regular });
+      }
+    } catch (err) {
+      console.error('Unsplash error:', err.message);
+    }
+  }
+
+  // ── Fallback: DALL-E 2 (much faster than DALL-E 3) ──
   try {
     const response = await client.images.generate({
-      model: 'dall-e-3',
-      prompt: `Professional food photography of "${title}". ${description || ''}. Cinematic lighting, shallow depth of field, on a dark slate surface, garnished beautifully, styled like a Michelin-star restaurant. Ultra-realistic, appetizing, warm tones.`,
+      model: 'dall-e-2',
+      prompt: `Professional food photography of ${title}. Appetizing, well-lit, on a clean surface. High quality food photo.`,
       n: 1,
-      size: '1792x1024',
-      quality: 'standard',
+      size: '512x512',
     });
     res.json({ url: response.data[0].url });
   } catch (err) {
