@@ -1259,6 +1259,35 @@
       50% { transform: translateY(-8px); }
     }
 
+    /* Hero CTA row */
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border-light);
+      border-radius: 100px;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .hero-cta-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
     /* Hero CTA button */
     .hero-cta {
       position: relative;
@@ -1370,9 +1399,14 @@
           <span class="hero-feature">🌾 Grains</span>
           <span class="hero-feature">📷 Photo scan</span>
         </div>
-        <button class="hero-cta animate delay-4" onclick="goToPage('page-input')">
-          Let's Cook <span class="cta-arrow">→</span>
-        </button>
+        <div class="hero-cta-row animate delay-4">
+          <button class="hero-cta" onclick="goToPage('page-input')">
+            Let's Cook <span class="cta-arrow">→</span>
+          </button>
+          <button class="hero-cta-secondary" onclick="navTo('feed', document.getElementById('nav-feed'))">
+            🌍 Community Feed
+          </button>
+        </div>
       </div>
 
       <!-- Food facts ticker -->
