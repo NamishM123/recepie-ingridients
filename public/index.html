@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     /* ── CSS Variables ── */
     :root {
@@ -984,6 +985,61 @@
     /* ── Selection color ── */
     ::selection { background: var(--accent-dim); color: var(--accent); }
 
+    /* ── Auth UI ── */
+    .login-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 16px;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .login-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .user-chip {
+      display: none; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 100px; padding: 5px 14px 5px 5px;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .user-chip:hover { border-color: var(--accent); }
+    .user-avatar-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: #0d0c0b;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .user-chip-name { font-size: 13px; font-weight: 600; color: var(--text-primary); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-chip-arrow { font-size: 10px; color: var(--text-muted); }
+
+    /* Auth modal specifics */
+    .auth-tabs { display: flex; gap: 0; margin-bottom: 22px; background: var(--surface); border-radius: var(--radius-sm); padding: 3px; }
+    .auth-tab {
+      flex: 1; padding: 8px; border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      background: transparent; cursor: pointer; transition: all var(--transition);
+    }
+    .auth-tab.active { background: var(--card); color: var(--text-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+
+    .google-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 11px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); color: var(--text-primary);
+      font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 16px;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .google-btn:hover { border-color: var(--accent); background: var(--card-hover); }
+    .google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .auth-divider {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text-muted); font-size: 12px; margin-bottom: 16px;
+    }
+    .auth-divider::before, .auth-divider::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    .auth-error { font-size: 13px; color: #e05b32; min-height: 18px; margin-bottom: 10px; }
+
+    .auth-footer { text-align: center; margin-top: 14px; font-size: 12px; color: var(--text-muted); }
+
     /* ── Section intro ── */
     .section-intro {
       text-align: center;
@@ -1379,6 +1435,12 @@
     </div>
     <div class="header-actions">
       <button class="back-btn" id="back-btn" onclick="goToPage('page-input')">← Back</button>
+      <button class="login-btn" id="login-btn" onclick="openAuthModal()">Sign In</button>
+      <div class="user-chip" id="user-chip" onclick="signOut()">
+        <div class="user-avatar-circle" id="user-avatar-circle">?</div>
+        <span class="user-chip-name" id="user-chip-name">Chef</span>
+        <span class="user-chip-arrow">Sign out ↗</span>
+      </div>
       <button class="theme-toggle" id="theme-toggle" title="Toggle theme" onclick="toggleTheme()">🌙</button>
     </div>
   </header>
@@ -1810,6 +1872,37 @@
     </div>
   </div>
 
+  <!-- ── Auth Modal ── -->
+  <div class="modal-overlay" id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
+    <div class="modal">
+      <div class="modal-icon">👨‍🍳</div>
+      <div class="modal-title">Welcome to the kitchen</div>
+      <div class="modal-sub">Sign in to save recipes and post to the community.</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
+      <div class="modal-field">
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="chef@example.com" autocomplete="email" />
+      </div>
+      <div class="modal-field">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <button class="modal-submit" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+      <div class="auth-footer" id="auth-footer">
+        No account? <a href="#" onclick="switchAuthTab('signup');return false" style="color:var(--accent)">Sign up free</a>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Share Modal ── -->
   <div class="modal-overlay" id="share-modal" onclick="if(event.target===this)closeShareModal()">
     <div class="modal">
@@ -1832,6 +1925,119 @@
   </div>
 
   <script>
+    // ── Supabase Auth ──
+    let supabaseClient = null;
+    let currentUser = null;
+    let currentSession = null;
+
+    async function initAuth() {
+      try {
+        const cfg = await fetch('/api/config').then(r => r.json());
+        if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return; // not yet configured
+        supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+
+        // Restore existing session
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) setSession(session);
+
+        // Listen for auth changes
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+          setSession(session);
+        });
+      } catch(e) { console.warn('Auth init failed:', e.message); }
+    }
+
+    function setSession(session) {
+      currentSession = session;
+      currentUser = session?.user || null;
+      updateAuthUI();
+    }
+
+    function getAuthHeader() {
+      return currentSession?.access_token
+        ? { Authorization: `Bearer ${currentSession.access_token}` }
+        : {};
+    }
+
+    function updateAuthUI() {
+      const loginBtn  = document.getElementById('login-btn');
+      const userChip  = document.getElementById('user-chip');
+      const nameEl    = document.getElementById('user-chip-name');
+      const avatarEl  = document.getElementById('user-avatar-circle');
+
+      if (currentUser) {
+        loginBtn.style.display  = 'none';
+        userChip.style.display  = 'flex';
+        const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'Chef';
+        nameEl.textContent   = name;
+        avatarEl.textContent = name[0].toUpperCase();
+      } else {
+        loginBtn.style.display  = '';
+        userChip.style.display  = 'none';
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('auth-modal').classList.add('open');
+      document.getElementById('auth-error').textContent = '';
+      document.getElementById('auth-email').value = '';
+      document.getElementById('auth-password').value = '';
+    }
+    function closeAuthModal() { document.getElementById('auth-modal').classList.remove('open'); }
+
+    let authMode = 'signin';
+    function switchAuthTab(mode) {
+      authMode = mode;
+      document.getElementById('tab-signin').classList.toggle('active', mode === 'signin');
+      document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+      document.getElementById('auth-submit-btn').textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+      document.getElementById('auth-footer').style.display = mode === 'signup' ? 'none' : '';
+      document.getElementById('auth-error').textContent = '';
+    }
+
+    async function handleAuth() {
+      if (!supabaseClient) return showToast('Auth not configured yet.', 'error');
+      const email    = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const errEl    = document.getElementById('auth-error');
+      const btn      = document.getElementById('auth-submit-btn');
+      if (!email || !password) { errEl.textContent = 'Please fill in all fields.'; return; }
+
+      btn.disabled = true; btn.textContent = 'Please wait…';
+      errEl.textContent = '';
+      try {
+        const fn = authMode === 'signin'
+          ? supabaseClient.auth.signInWithPassword({ email, password })
+          : supabaseClient.auth.signUp({ email, password });
+        const { error } = await fn;
+        if (error) { errEl.textContent = error.message; return; }
+        if (authMode === 'signup') {
+          errEl.style.color = 'var(--protein)';
+          errEl.textContent = 'Check your email to confirm your account!';
+          return;
+        }
+        closeAuthModal();
+        showToast('Welcome back! 👨‍🍳', 'success');
+      } catch(e) { errEl.textContent = e.message; }
+      finally { btn.disabled = false; btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account'; }
+    }
+
+    async function signInWithGoogle() {
+      if (!supabaseClient) return showToast('Auth not configured yet.', 'error');
+      await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin },
+      });
+    }
+
+    async function signOut() {
+      if (!supabaseClient) return;
+      await supabaseClient.auth.signOut();
+      showToast('Signed out.', 'info');
+    }
+
+    initAuth();
+
     // ── Theme ──
     function toggleTheme() {
       const html = document.documentElement;
@@ -2266,13 +2472,27 @@
     }
 
     function regenerate() { goToPage('page-input'); }
-    function saveRecipe() {
+    async function saveRecipe() {
       if (!window._lastRecipe) return;
+      // DB save if logged in
+      if (currentUser) {
+        try {
+          const r = await fetch('/api/saved', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+            body: JSON.stringify({ recipe: window._lastRecipe }),
+          });
+          const d = await r.json();
+          if (r.status === 409) { showToast('Already saved!', 'info'); return; }
+          if (!r.ok) throw new Error(d.error);
+          showToast('Recipe saved! 🔖', 'success');
+        } catch(e) { showToast(e.message, 'error'); }
+        return;
+      }
+      // localStorage fallback for guests
       const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
-      // avoid duplicates
-      const exists = saves.some(s => s.title === window._lastRecipe.title);
-      if (exists) { showToast('Already saved!', 'info'); return; }
-      saves.unshift({ ...window._lastRecipe, savedAt: Date.now() });
+      if (saves.some(s => s.recipe?.title === window._lastRecipe.title)) { showToast('Already saved!', 'info'); return; }
+      saves.unshift({ recipe: window._lastRecipe, savedAt: Date.now() });
       localStorage.setItem('saved_recipes', JSON.stringify(saves.slice(0, 50)));
       showToast('Recipe saved! 🔖', 'success');
     }
@@ -2410,14 +2630,15 @@
     }
 
     async function likePost(id, btn) {
+      if (!currentUser) { openAuthModal(); showToast('Sign in to like recipes!', 'info'); return; }
       if (likedPosts.has(id)) return;
       likedPosts.add(id);
       localStorage.setItem('liked_posts', JSON.stringify([...likedPosts]));
       btn.classList.add('liked');
       try {
-        const r = await fetch(`/api/feed/${id}/like`, { method: 'POST' });
+        const r = await fetch(`/api/feed/${id}/like`, { method: 'POST', headers: getAuthHeader() });
         const d = await r.json();
-        btn.querySelector('.like-count').textContent = d.likes;
+        if (r.ok) btn.querySelector('.like-count').textContent = d.likes;
       } catch(e) {}
     }
 
@@ -2434,36 +2655,56 @@
     function showSavedPage() {
       switchToOverlayPage('page-saved', '← Home', 'home', 'nav-home');
 
-      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
       const list = document.getElementById('saved-list');
+      list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">⏳</div>Loading…</div>';
+
+      let saves = [];
+      if (currentUser) {
+        try {
+          const r = await fetch('/api/saved', { headers: getAuthHeader() });
+          saves = await r.json();
+        } catch(e) { saves = []; }
+      } else {
+        // Guest: load from localStorage
+        const raw = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+        saves = raw.map((s, i) => ({ id: 'local-' + i, recipe: s.recipe || s, created_at: s.savedAt }));
+      }
+
       if (!saves.length) {
-        list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">📭</div>No saved recipes yet.<br/>Generate a recipe and tap <strong>🔖 Save</strong>.</div>';
+        list.innerHTML = `<div class="feed-empty"><div class="feed-empty-icon">📭</div>No saved recipes yet.<br/>Generate a recipe and tap <strong>🔖 Save</strong>.${!currentUser ? '<br/><br/><button class="modal-submit" style="margin-top:8px;width:auto;padding:8px 20px" onclick="openAuthModal()">Sign in to save across devices</button>' : ''}</div>`;
         return;
       }
-      list.innerHTML = saves.map((r, i) => `
-        <div class="saved-card" onclick="viewSavedRecipe(${i})">
-          <div class="saved-card-icon">${cuisineEmoji(r.cuisine_style)}</div>
+      list.innerHTML = saves.map(s => {
+        const recipe = s.recipe || s;
+        return `
+        <div class="saved-card" onclick="viewSavedRecipe('${s.id}', ${JSON.stringify(recipe).replace(/'/g, '&#39;')})">
+          <div class="saved-card-icon">${cuisineEmoji(recipe.cuisine_style)}</div>
           <div class="saved-card-body">
-            <div class="saved-card-title">${r.title}</div>
-            <div class="saved-card-sub">${r.cuisine_style || ''} · ${r.difficulty || ''} · ${(r.nutrition||{}).calories||'?'} kcal</div>
+            <div class="saved-card-title">${recipe.title || 'Untitled'}</div>
+            <div class="saved-card-sub">${recipe.cuisine_style || ''} · ${recipe.difficulty || ''} · ${(recipe.nutrition||{}).calories||'?'} kcal</div>
           </div>
-          <button class="saved-card-del" onclick="event.stopPropagation();deleteSaved(${i})">🗑</button>
-        </div>`).join('');
+          <button class="saved-card-del" onclick="event.stopPropagation();deleteSaved('${s.id}')">🗑</button>
+        </div>`;
+      }).join('');
     }
 
-    function viewSavedRecipe(i) {
-      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
-      if (!saves[i]) return;
-      renderRecipe(saves[i]);
+    function viewSavedRecipe(id, recipe) {
+      renderRecipe(recipe);
       const backBtn = document.getElementById('back-btn');
       backBtn.textContent = '← Saved';
       backBtn.onclick = () => navTo('saved', document.getElementById('nav-saved'));
     }
 
-    function deleteSaved(i) {
-      const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
-      saves.splice(i, 1);
-      localStorage.setItem('saved_recipes', JSON.stringify(saves));
+    async function deleteSaved(id) {
+      if (currentUser && !id.startsWith('local-')) {
+        await fetch(`/api/saved/${id}`, { method: 'DELETE', headers: getAuthHeader() });
+      } else {
+        // Guest localStorage
+        const saves = JSON.parse(localStorage.getItem('saved_recipes') || '[]');
+        const idx = parseInt(id.replace('local-', ''));
+        saves.splice(idx, 1);
+        localStorage.setItem('saved_recipes', JSON.stringify(saves));
+      }
       showSavedPage();
       showToast('Recipe removed.', 'info');
     }
@@ -2471,6 +2712,7 @@
     // ── Share to Community Feed ──
     function openShareModal() {
       if (!window._lastRecipe) { showToast('Generate a recipe first!', 'error'); return; }
+      if (!currentUser) { openAuthModal(); showToast('Sign in to post to the community!', 'info'); return; }
       const r = window._lastRecipe;
       document.getElementById('share-preview-title').textContent = r.title || 'Untitled';
       document.getElementById('share-preview-sub').textContent =
@@ -2489,8 +2731,8 @@
       try {
         const r = await fetch('/api/share', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ recipe: window._lastRecipe, author, avatar: '🍳' }),
+          headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+          body: JSON.stringify({ recipe: window._lastRecipe, author }),
         });
         if (!r.ok) throw new Error('Failed to post.');
         closeShareModal();
