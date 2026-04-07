@@ -1197,6 +1197,64 @@
     }
     .saved-card-del:hover { color: #e05b32; }
 
+    /* ── Featured / Top 5 ── */
+    .featured-section { margin-bottom: 24px; }
+    .featured-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+    }
+    .featured-month-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent);
+      background: var(--accent-dim); border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 100px; padding: 3px 10px;
+    }
+    .featured-strip {
+      display: flex; gap: 12px; overflow-x: auto;
+      padding-bottom: 10px; scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .featured-strip::-webkit-scrollbar { display: none; }
+    .featured-card {
+      flex-shrink: 0; width: 185px; scroll-snap-align: start;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      cursor: pointer; transition: transform var(--transition), border-color var(--transition);
+      position: relative;
+    }
+    .featured-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .featured-card-img { width: 100%; height: 116px; object-fit: cover; display: block; }
+    .featured-card-placeholder { width: 100%; height: 116px; display: flex; align-items: center; justify-content: center; font-size: 38px; background: var(--surface); }
+    .featured-rank {
+      position: absolute; top: 8px; left: 8px;
+      min-width: 26px; height: 26px; border-radius: 13px;
+      padding: 0 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .rank-1 { background: #FFD700; color: #0d0c0b; }
+    .rank-2 { background: #C0C0C0; color: #0d0c0b; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+    .rank-other { background: rgba(0,0,0,0.65); color: #fff; font-size: 11px; }
+    .featured-card-body { padding: 10px 12px 12px; }
+    .featured-card-title {
+      font-size: 13px; font-weight: 700; color: var(--text-primary);
+      margin-bottom: 6px; line-height: 1.3;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .featured-card-meta { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between; }
+    .featured-likes { color: #e05b32; font-weight: 700; font-size: 12px; }
+    .featured-divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0 16px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-muted);
+    }
+    .featured-divider::before, .featured-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
     /* ── Share modal ── */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 800;
@@ -2040,6 +2098,17 @@
       <div class="feed-header">
         <div class="feed-title">🌍 Community Feed</div>
       </div>
+
+      <!-- Top 5 of the Month -->
+      <div class="featured-section" id="featured-section" style="display:none">
+        <div class="featured-header">
+          🏆 Top 5 of the Month
+          <span class="featured-month-badge" id="featured-month-label"></span>
+        </div>
+        <div class="featured-strip" id="featured-strip"></div>
+        <div class="featured-divider">All Recipes</div>
+      </div>
+
       <div id="feed-list">
         <div class="feed-empty"><div class="feed-empty-icon">🍳</div>Loading recipes…</div>
       </div>
@@ -2879,6 +2948,45 @@
       backBtn.onclick = () => navTo(backPage, document.getElementById(backNavId));
     }
 
+    function renderFeatured(posts) {
+      const now = new Date();
+      const thisMonth = now.getMonth(), thisYear = now.getFullYear();
+      const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      const monthPosts = posts.filter(p => {
+        const d = new Date(p.postedAt);
+        return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+      });
+      const top5 = [...monthPosts].sort((a,b) => (b.likes||0) - (a.likes||0)).slice(0,5);
+
+      const secEl = document.getElementById('featured-section');
+      if (!top5.length) { secEl.style.display = 'none'; return; }
+
+      document.getElementById('featured-month-label').textContent = MONTHS[thisMonth] + ' ' + thisYear;
+      secEl.style.display = 'block';
+
+      const medals = ['🥇','🥈','🥉'];
+      document.getElementById('featured-strip').innerHTML = top5.map((post, i) => {
+        const rank = i + 1;
+        const rankCls = rank <= 3 ? `rank-${rank}` : 'rank-other';
+        const rankLabel = rank <= 3 ? medals[rank-1] : `#${rank}`;
+        return `
+          <div class="featured-card" onclick="viewFeedRecipe('${post.id}')">
+            ${post.image_url
+              ? `<img class="featured-card-img" src="${post.image_url}" loading="lazy" alt="${post.title}" />`
+              : `<div class="featured-card-placeholder">${cuisineEmoji(post.cuisine_style)}</div>`}
+            <div class="featured-rank ${rankCls}">${rankLabel}</div>
+            <div class="featured-card-body">
+              <div class="featured-card-title">${post.title}</div>
+              <div class="featured-card-meta">
+                <span>${post.author || 'Anonymous'}</span>
+                <span class="featured-likes">❤️ ${post.likes || 0}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
     async function showFeedPage() {
       switchToOverlayPage('page-feed', '← Home', 'home', 'nav-home');
 
@@ -2889,7 +2997,9 @@
         feedCache = await r.json();
         if (!feedCache.length) {
           list.innerHTML = '<div class="feed-empty"><div class="feed-empty-icon">🍳</div>No community recipes yet.<br/>Generate a recipe and <strong>Post to Feed</strong>!</div>';
+          document.getElementById('featured-section').style.display = 'none';
         } else {
+          renderFeatured(feedCache);
           list.innerHTML = feedCache.map(renderFeedCard).join('');
         }
       } catch(e) {
@@ -2906,6 +3016,9 @@
         const r = await fetch(`/api/feed/${id}/like`, { method: 'POST' });
         const d = await r.json();
         btn.querySelector('.like-count').textContent = d.likes;
+        // Update cached likes and refresh featured strip
+        const post = feedCache.find(p => p.id === id);
+        if (post) { post.likes = d.likes; renderFeatured(feedCache); }
       } catch(e) {}
     }
 
