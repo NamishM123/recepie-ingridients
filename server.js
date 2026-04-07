@@ -188,6 +188,35 @@ app.post('/api/generate-image', async (req, res) => {
   }
 });
 
+// ---------- hero images ----------
+
+const heroImageCache = [];
+const HERO_QUERIES = [
+  'gourmet pasta dinner', 'grilled salmon plated', 'beef steak fine dining',
+  'colorful vegetable stir fry', 'chicken dish restaurant', 'fresh salad bowl',
+];
+
+app.get('/api/hero-images', async (_req, res) => {
+  if (heroImageCache.length) return res.json(heroImageCache);
+  if (!process.env.UNSPLASH_ACCESS_KEY) return res.json([]);
+  try {
+    const results = await Promise.all(HERO_QUERIES.map(async q => {
+      const r = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(q)}&orientation=landscape&per_page=1&order_by=relevant`,
+        { headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } }
+      );
+      const d = await r.json();
+      return d.results?.[0]?.urls?.regular || null;
+    }));
+    const valid = results.filter(Boolean);
+    heroImageCache.push(...valid);
+    res.json(valid);
+  } catch (err) {
+    console.error('Hero images error:', err.message);
+    res.json([]);
+  }
+});
+
 // ---------- community feed ----------
 
 const communityFeed = [

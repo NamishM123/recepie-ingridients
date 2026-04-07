@@ -1247,17 +1247,64 @@
     .modal-submit:hover:not(:disabled) { background: var(--accent-hover); }
     .modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Hero logo ── */
-    .hero-logo-img {
-      width: 130px; height: 130px; object-fit: contain;
-      margin-bottom: 16px;
-      filter: drop-shadow(0 4px 24px rgba(232,160,32,0.35));
-      animation: floatBob 3s ease-in-out infinite;
+    /* ── Hero photo slideshow ── */
+    .hero-bg-slider { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0;
+      transform: scale(1.08);
+      transition: opacity 1.8s ease-in-out, transform 7s ease-out;
     }
+    .hero-slide.active { opacity: 1; transform: scale(1); }
+    /* cinematic dark gradient over photos */
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(
+        160deg,
+        rgba(0,0,0,0.58) 0%,
+        rgba(0,0,0,0.22) 45%,
+        rgba(0,0,0,0.75) 100%
+      );
+    }
+
+    /* ── Logo highlight ── */
+    .hero-logo-wrap {
+      position: relative; display: inline-block; margin-bottom: 22px;
+    }
+    .hero-logo-ring {
+      position: absolute; inset: -14px; border-radius: 50%;
+      border: 2px solid rgba(232,160,32,0.5);
+      animation: ringPulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-logo-ring2 {
+      position: absolute; inset: -30px; border-radius: 50%;
+      border: 1.5px solid rgba(232,160,32,0.2);
+      animation: ringPulse 2.5s ease-in-out infinite 0.7s;
+      pointer-events: none;
+    }
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1);    opacity: 0.5; }
+      50%       { transform: scale(1.07); opacity: 1; }
+    }
+    .hero-logo-img {
+      width: 170px; height: 170px; object-fit: contain;
+      filter:
+        drop-shadow(0 0 32px rgba(232,160,32,0.7))
+        drop-shadow(0 0 10px rgba(232,160,32,0.4))
+        drop-shadow(0 8px 32px rgba(0,0,0,0.7));
+      animation: floatBob 3.2s ease-in-out infinite;
+    }
+    @media (max-width: 480px) { .hero-logo-img { width: 130px; height: 130px; } }
     @keyframes floatBob {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+      50%       { transform: translateY(-10px); }
     }
+
+    /* text readability on real photos */
+    .hero-headline { text-shadow: 0 2px 24px rgba(0,0,0,0.7); }
+    .hero-sub      { text-shadow: 0 1px 10px rgba(0,0,0,0.6); }
 
     /* Hero CTA row */
     .hero-cta-row {
@@ -1367,21 +1414,18 @@
   <!-- ── Page 1: Hero ── -->
   <div id="page-hero" class="page page-active">
     <section class="hero">
+      <!-- Photo slideshow background -->
       <div class="hero-bg"></div>
-      <div class="hero-glow"></div>
-
-      <!-- Floating food particles -->
-      <span class="food-particle" style="left:8%;  bottom:5%;  --dur:9s;  --delay:0s">🥩</span>
-      <span class="food-particle" style="left:18%; bottom:5%;  --dur:11s; --delay:2s">🧄</span>
-      <span class="food-particle" style="left:30%; bottom:5%;  --dur:8s;  --delay:4s">🌶️</span>
-      <span class="food-particle" style="left:44%; bottom:5%;  --dur:13s; --delay:1s">🥦</span>
-      <span class="food-particle" style="left:58%; bottom:5%;  --dur:10s; --delay:3s">🍋</span>
-      <span class="food-particle" style="left:70%; bottom:5%;  --dur:7s;  --delay:0.5s">🧅</span>
-      <span class="food-particle" style="left:80%; bottom:5%;  --dur:12s; --delay:2.5s">🍅</span>
-      <span class="food-particle" style="left:90%; bottom:5%;  --dur:9s;  --delay:5s">🥕</span>
+      <div class="hero-bg-slider" id="hero-bg-slider"></div>
+      <div class="hero-overlay"></div>
 
       <div class="hero-content">
-        <img src="/logo.png" class="hero-logo-img animate delay-1" alt="Ingredients to Recipe" onerror="this.style.display='none'" />
+        <!-- Glowing logo -->
+        <div class="hero-logo-wrap animate delay-1">
+          <div class="hero-logo-ring"></div>
+          <div class="hero-logo-ring2"></div>
+          <img src="/logo.png" class="hero-logo-img" alt="Ingredients to Recipe" onerror="this.style.display='none'" />
+        </div>
         <div class="hero-eyebrow animate delay-1">
           <span>✨</span> AI-Powered Personal Chef
         </div>
@@ -1801,6 +1845,46 @@
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.dataset.theme = savedTheme;
     document.getElementById('theme-toggle').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    // ── Hero image slideshow ──
+    (async function loadHeroImages() {
+      try {
+        const r = await fetch('/api/hero-images');
+        const images = await r.json();
+        if (!images.length) return;
+
+        const slider = document.getElementById('hero-bg-slider');
+        const slides = images.map((url, i) => {
+          const div = document.createElement('div');
+          div.className = 'hero-slide' + (i === 0 ? ' active' : '');
+          div.style.backgroundImage = `url(${url})`;
+          slider.appendChild(div);
+          return div;
+        });
+
+        // Ken Burns: subtle zoom on active slide
+        function applyKenBurns(slide) {
+          slide.style.transition = 'none';
+          slide.style.transform = 'scale(1.08)';
+          // force reflow then animate
+          slide.getBoundingClientRect();
+          slide.style.transition = 'transform 7s ease-out, opacity 1.8s ease-in-out';
+          slide.style.transform = 'scale(1)';
+        }
+
+        applyKenBurns(slides[0]);
+        let current = 0;
+
+        setInterval(() => {
+          slides[current].classList.remove('active');
+          slides[current].style.transform = 'scale(1.08)'; // reset zoom for next time
+          current = (current + 1) % slides.length;
+          slides[current].classList.add('active');
+          applyKenBurns(slides[current]);
+        }, 6000);
+
+      } catch(e) { /* silently fall back to gradient bg */ }
+    })();
 
     // ── Food facts ticker ──
     const FACTS = [
