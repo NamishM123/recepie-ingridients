@@ -37,7 +37,7 @@ function buildRecipePrompt({ ingredients, equipment, seasonings, pantry, cuisine
 
   return {
     system: `You are a world-class personal chef, culinary assistant, and nutrition coach. Generate complete, practical recipes tailored EXACTLY to what the user has available. CRITICAL RULES: (1) ONLY use ingredients the user explicitly listed — do NOT add, substitute, or assume any ingredient not on their list. (2) If an ingredient would improve the dish but wasn't listed, put it in missing_optional — never sneak it into the recipe. (3) Work creatively within the constraint of only what was provided. Always make food feel delicious and premium — never like "diet food". Be precise with nutrition estimates.`,
-    user: `Ingredients I have: ${ingredients.join(', ')}${kitchenCtx}
+    user: `Ingredients I have (quantities included where specified — use them for accurate macro calculation): ${ingredients.join(', ')}${kitchenCtx}
 
 IMPORTANT: Build the recipe using ONLY the ingredients listed above. Do not use anything else.
 ${goalPart}
@@ -366,6 +366,22 @@ app.post('/api/feed/:id/like', (req, res) => {
   if (!post) return res.status(404).json({ error: 'Post not found.' });
   post.likes = (post.likes || 0) + 1;
   res.json({ likes: post.likes });
+});
+
+// Ingredient substitution
+app.post('/api/substitute', async (req, res) => {
+  const { ingredient, recipe_title = '' } = req.body;
+  if (!ingredient) return res.status(400).json({ error: 'ingredient required' });
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4o', max_tokens: 300,
+      messages: [{ role: 'user', content: `For a "${recipe_title}" recipe, suggest 3 practical kitchen substitutes for "${ingredient}". Respond ONLY with a JSON array: [{"name":"substitute name","note":"brief reason it works"}]. No markdown, no extra text.` }],
+    });
+    res.json(parseJSON(completion.choices[0].message.content || '[]'));
+  } catch (err) {
+    console.error('Substitute error:', err.message);
+    res.status(500).json({ error: 'Failed to get substitutes.' });
+  }
 });
 
 // ---------- start ----------

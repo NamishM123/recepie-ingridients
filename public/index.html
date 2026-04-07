@@ -1366,6 +1366,190 @@
       transition: transform 0.2s ease;
     }
     .hero-cta:hover .cta-arrow { transform: translateX(4px); }
+
+    /* ── Serving Scaler ── */
+    .serving-scaler {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 18px;
+      margin-bottom: 16px;
+    }
+    .serving-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); flex: 1; }
+    .serving-controls { display: flex; align-items: center; gap: 10px; }
+    .serving-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--surface); border: 1.5px solid var(--border);
+      font-size: 18px; font-weight: 700; color: var(--text-primary);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); flex-shrink: 0;
+    }
+    .serving-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .serving-count { font-size: 20px; font-weight: 700; min-width: 22px; text-align: center; }
+    .serving-unit { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Macro Rings ── */
+    .macro-rings-wrap {
+      display: flex; justify-content: center; gap: 28px;
+      margin-bottom: 20px; padding: 4px 0; flex-wrap: wrap;
+    }
+    .macro-ring-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .macro-ring-svg { transform: rotate(-90deg); overflow: visible; }
+    .ring-track { fill: none; stroke: var(--border); stroke-width: 8; }
+    .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1); }
+    .ring-fill.protein { stroke: var(--protein); }
+    .ring-fill.carbs   { stroke: var(--carbs); }
+    .ring-fill.fat     { stroke: var(--fat); }
+    .macro-ring-value { font-size: 15px; font-weight: 700; }
+    .macro-ring-value.protein { color: var(--protein); }
+    .macro-ring-value.carbs   { color: var(--carbs); }
+    .macro-ring-value.fat     { color: var(--fat); }
+    .macro-ring-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+
+    /* ── Ingredient Substitution ── */
+    .sub-btn {
+      margin-left: auto; flex-shrink: 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 2px 7px;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      cursor: pointer; transition: all var(--transition); white-space: nowrap;
+    }
+    .sub-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .sub-panel {
+      grid-column: 1 / -1;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 14px;
+      font-size: 13px; margin-top: 2px; margin-bottom: 4px;
+      animation: pillBounce 0.35s cubic-bezier(0.34,1.6,0.64,1);
+    }
+    .sub-panel .sub-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+    .sub-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 5px; color: var(--text-secondary); }
+    .sub-item strong { color: var(--text-primary); }
+    .sub-loading { color: var(--text-muted); font-style: italic; }
+
+    /* ── Shopping List ── */
+    .shopping-list-wrap { margin-top: 12px; }
+    .shopping-list-btn {
+      width: 100%; padding: 10px; border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm); background: none;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .shopping-list-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .shopping-list-items { margin-top: 10px; }
+    .shopping-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px; cursor: pointer;
+    }
+    .shopping-item input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+    .shopping-item-body { flex: 1; }
+    .shopping-item-name { color: var(--text-primary); font-weight: 600; }
+    .shopping-item-reason { color: var(--text-muted); font-size: 12px; }
+    .shopping-copy-btn {
+      margin-top: 10px; padding: 8px 16px;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); cursor: pointer; transition: all var(--transition);
+    }
+    .shopping-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Cook Mode ── */
+    .cook-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #080706; display: flex; flex-direction: column;
+    }
+    .cook-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .cook-exit-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; padding: 8px 16px;
+      font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .cook-exit-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .cook-progress-text { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
+    .cook-body {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; padding: 36px 32px;
+      max-width: 720px; margin: 0 auto; width: 100%; overflow-y: auto;
+    }
+    .cook-step-num-big { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 18px; }
+    .cook-step-text-big {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 3.5vw, 34px); font-weight: 700;
+      color: #f0ebe2; line-height: 1.6; margin-bottom: 22px;
+    }
+    .cook-utensil-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(232,160,32,0.12); border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 100px; padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      margin-bottom: 28px; width: fit-content;
+    }
+    .cook-timer-section { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .cook-timer-input {
+      width: 72px; padding: 8px 10px; border-radius: 8px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+      color: #fff; font-size: 14px; text-align: center; outline: none;
+      font-family: inherit;
+    }
+    .cook-timer-input::placeholder { color: rgba(255,255,255,0.3); }
+    .cook-timer-btn {
+      padding: 8px 16px; border-radius: 8px;
+      background: var(--accent); color: #0d0c0b;
+      font-size: 13px; font-weight: 700; cursor: pointer; border: none;
+      transition: background 0.2s ease; font-family: inherit;
+    }
+    .cook-timer-btn:hover { background: var(--accent-hover); }
+    .cook-timer-display { font-size: 22px; font-weight: 700; color: var(--accent); min-width: 72px; font-variant-numeric: tabular-nums; }
+    .cook-timer-display.urgent { color: #e05b32; animation: pulse 0.6s ease-in-out infinite; }
+    .cook-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-top: 1px solid rgba(255,255,255,0.08);
+      gap: 12px; flex-shrink: 0;
+    }
+    .cook-nav-btn {
+      padding: 12px 24px; border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s ease; font-family: inherit;
+    }
+    .cook-nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .cook-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .cook-nav-btn.next-btn { background: var(--accent); border-color: var(--accent); color: #0d0c0b; padding: 12px 32px; }
+    .cook-nav-btn.next-btn:hover:not(:disabled) { background: var(--accent-hover); color: #0d0c0b; border-color: var(--accent-hover); }
+    .cook-dots { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 200px; }
+    .cook-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s ease; flex-shrink: 0; }
+    .cook-dot.active { background: var(--accent); transform: scale(1.4); }
+    .cook-done-screen {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 40px; text-align: center;
+    }
+    .cook-done-icon { font-size: 72px; margin-bottom: 20px; animation: platePulse 1.5s ease-in-out infinite; }
+    .cook-done-title { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 12px; }
+    .cook-done-sub { font-size: 16px; color: rgba(255,255,255,0.6); margin-bottom: 28px; }
+    .cook-done-btn {
+      padding: 14px 32px; border-radius: 100px;
+      background: var(--accent); color: #0d0c0b;
+      font-size: 16px; font-weight: 700; cursor: pointer; border: none;
+      font-family: inherit; transition: background 0.2s ease;
+    }
+    .cook-done-btn:hover { background: var(--accent-hover); }
+
+    /* ── Confetti ── */
+    .confetti-piece {
+      position: fixed; top: -12px; pointer-events: none; z-index: 9999;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0%   { opacity: 1; }
+      85%  { opacity: 1; }
+      100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -1484,7 +1668,7 @@
         </div>
         <input type="file" id="meat-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('meat',event)" />
         <div class="tag-field" id="meat-field" onclick="document.getElementById('meat-input').focus()">
-          <input id="meat-input" placeholder="e.g. chicken breast, salmon, eggs… press Enter" autocomplete="off" />
+          <input id="meat-input" placeholder="e.g. 300g chicken breast, 2 eggs… press Enter" autocomplete="off" />
         </div>
         <div class="img-preview-wrap" id="meat-preview-wrap">
           <img id="meat-preview" alt="" />
@@ -1504,7 +1688,7 @@
         </div>
         <input type="file" id="veg-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('veg',event)" />
         <div class="tag-field" id="veg-field" onclick="document.getElementById('veg-input').focus()">
-          <input id="veg-input" placeholder="e.g. onion, garlic, spinach… press Enter" autocomplete="off" />
+          <input id="veg-input" placeholder="e.g. 2 onions, 4 cloves garlic… press Enter" autocomplete="off" />
         </div>
         <div class="img-preview-wrap" id="veg-preview-wrap">
           <img id="veg-preview" alt="" />
@@ -1524,7 +1708,7 @@
         </div>
         <input type="file" id="fruit-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('fruit',event)" />
         <div class="tag-field" id="fruit-field" onclick="document.getElementById('fruit-input').focus()">
-          <input id="fruit-input" placeholder="e.g. lemon, apple, avocado… press Enter" autocomplete="off" />
+          <input id="fruit-input" placeholder="e.g. 1 lemon, 1 avocado… press Enter" autocomplete="off" />
         </div>
         <div class="chips-row" id="fruit-chips"></div>
       </div>
@@ -1540,7 +1724,7 @@
         </div>
         <input type="file" id="dairy-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('dairy',event)" />
         <div class="tag-field" id="dairy-field" onclick="document.getElementById('dairy-input').focus()">
-          <input id="dairy-input" placeholder="e.g. butter, milk, cheddar… press Enter" autocomplete="off" />
+          <input id="dairy-input" placeholder="e.g. 50g butter, 200ml milk… press Enter" autocomplete="off" />
         </div>
         <div class="img-preview-wrap" id="dairy-preview-wrap">
           <img id="dairy-preview" alt="" />
@@ -1559,7 +1743,7 @@
         </div>
         <input type="file" id="grains-img-input" accept="image/*" capture="environment" style="display:none" onchange="handleFoodScan('grains',event)" />
         <div class="tag-field" id="grains-field" onclick="document.getElementById('grains-input').focus()">
-          <input id="grains-input" placeholder="e.g. rice, pasta, bread… press Enter" autocomplete="off" />
+          <input id="grains-input" placeholder="e.g. 1 cup rice, 200g pasta… press Enter" autocomplete="off" />
         </div>
         <div class="chips-row" id="grains-chips"></div>
       </div>
@@ -1730,6 +1914,18 @@
       <!-- Badges row -->
       <div class="badges-row" id="r-badges"></div>
 
+      <!-- Serving Scaler -->
+      <div class="serving-scaler" id="serving-scaler" style="display:none">
+        <div class="serving-label">🍽 Scale Recipe</div>
+        <div style="flex:1"></div>
+        <div class="serving-controls">
+          <button class="serving-btn" onclick="changeServings(-1)">−</button>
+          <span class="serving-count" id="serving-count">2</span>
+          <span class="serving-unit">servings</span>
+          <button class="serving-btn" onclick="changeServings(1)">+</button>
+        </div>
+      </div>
+
       <!-- Ingredients -->
       <div class="card" style="margin-bottom:16px">
         <div class="r-section-title">🥕 Ingredients Used</div>
@@ -1744,19 +1940,36 @@
 
       <!-- Macros -->
       <div class="card" style="margin-bottom:16px">
-        <div class="r-section-title">📊 Nutrition &amp; Macros <span style="color:var(--text-muted);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0"> per serving</span></div>
-        <div class="macro-bar-wrap">
-          <div class="macro-bar">
-            <div class="macro-seg protein" id="bar-protein"></div>
-            <div class="macro-seg carbs"   id="bar-carbs"></div>
-            <div class="macro-seg fat"     id="bar-fat"></div>
+        <div class="r-section-title">📊 Nutrition &amp; Macros <span style="color:var(--text-muted);font-size:10px;font-weight:400;text-transform:none;letter-spacing:0" id="macro-serving-label"> per serving</span></div>
+
+        <!-- Animated macro rings -->
+        <div class="macro-rings-wrap">
+          <div class="macro-ring-item">
+            <svg class="macro-ring-svg" width="88" height="88" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="36"/>
+              <circle class="ring-fill protein" id="ring-protein" cx="44" cy="44" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
+            </svg>
+            <div class="macro-ring-value protein" id="ring-val-protein">0g</div>
+            <div class="macro-ring-label">Protein</div>
           </div>
-          <div class="macro-legend">
-            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--protein)"></div>Protein</div>
-            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--carbs)"></div>Carbs</div>
-            <div class="macro-legend-item"><div class="macro-legend-dot" style="background:var(--fat)"></div>Fat</div>
+          <div class="macro-ring-item">
+            <svg class="macro-ring-svg" width="88" height="88" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="36"/>
+              <circle class="ring-fill carbs" id="ring-carbs" cx="44" cy="44" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
+            </svg>
+            <div class="macro-ring-value carbs" id="ring-val-carbs">0g</div>
+            <div class="macro-ring-label">Carbs</div>
+          </div>
+          <div class="macro-ring-item">
+            <svg class="macro-ring-svg" width="88" height="88" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="36"/>
+              <circle class="ring-fill fat" id="ring-fat" cx="44" cy="44" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
+            </svg>
+            <div class="macro-ring-value fat" id="ring-val-fat">0g</div>
+            <div class="macro-ring-label">Fat</div>
           </div>
         </div>
+
         <div class="macro-grid" id="r-macro-grid"></div>
         <div class="macro-summary" id="r-macro-summary"></div>
       </div>
@@ -1774,17 +1987,52 @@
       <div class="missing-card" id="r-missing" style="display:none">
         <div class="missing-title">✨ Optional upgrades — not required but would elevate this dish</div>
         <div id="r-missing-list"></div>
+        <!-- Shopping list -->
+        <div class="shopping-list-wrap" id="shopping-list-wrap" style="display:none">
+          <button class="shopping-list-btn" onclick="toggleShoppingList()">🛒 Generate Shopping List</button>
+          <div class="shopping-list-items" id="shopping-items" style="display:none"></div>
+        </div>
       </div>
 
       <!-- Action buttons -->
       <div class="action-row">
-        <button class="action-btn primary" onclick="goToPage('page-input')">← New Recipe</button>
+        <button class="action-btn" onclick="goToPage('page-input')">← New Recipe</button>
         <button class="action-btn" onclick="saveRecipe()">🔖 Save</button>
+        <button class="action-btn primary" onclick="launchCookMode()">🍳 Cook Mode</button>
         <button class="action-btn" onclick="openShareModal()">🌍 Post to Feed</button>
       </div>
 
     </div><!-- end recipe-inner -->
   </div><!-- end page-recipe -->
+
+  <!-- ── Cook Mode Overlay ── -->
+  <div id="cook-overlay" class="cook-overlay" style="display:none">
+    <div class="cook-header">
+      <button class="cook-exit-btn" onclick="closeCookMode()">✕ Exit Cook Mode</button>
+      <div class="cook-progress-text">Step <span id="cook-step-num">1</span> of <span id="cook-step-total">5</span></div>
+    </div>
+    <div class="cook-body" id="cook-body">
+      <div class="cook-step-num-big" id="cook-step-label">Step 1</div>
+      <div class="cook-step-text-big" id="cook-step-text"></div>
+      <div class="cook-utensil-badge" id="cook-utensil" style="display:none">🍴 <span id="cook-utensil-text"></span></div>
+      <div class="cook-timer-section">
+        <input class="cook-timer-input" type="number" id="cook-timer-input" placeholder="min" min="1" max="90" />
+        <button class="cook-timer-btn" id="cook-timer-btn" onclick="toggleCookTimer()">▶ Start</button>
+        <div class="cook-timer-display" id="cook-timer-display"></div>
+      </div>
+    </div>
+    <div class="cook-done-screen" id="cook-done" style="display:none">
+      <div class="cook-done-icon">🎉</div>
+      <div class="cook-done-title">Recipe Complete!</div>
+      <div class="cook-done-sub">Time to plate and enjoy your meal</div>
+      <button class="cook-done-btn" onclick="closeCookMode()">Back to Recipe</button>
+    </div>
+    <div class="cook-nav">
+      <button class="cook-nav-btn" id="cook-prev-btn" onclick="cookStep(-1)" disabled>← Prev</button>
+      <div class="cook-dots" id="cook-dots"></div>
+      <button class="cook-nav-btn next-btn" id="cook-next-btn" onclick="cookStep(1)">Next →</button>
+    </div>
+  </div>
 
   <!-- ── Page: Community Feed ── -->
   <div id="page-feed" class="page page-below">
@@ -2199,11 +2447,17 @@
         d.servings          ? `<span class="badge badge-servings">🍽 ${d.servings} servings</span>` : '',
       ].join('');
 
-      // Ingredients
+      // Ingredients (with substitution buttons)
       const ingEl = document.getElementById('r-ingredients');
-      ingEl.innerHTML = (d.ingredients || []).map(i =>
-        `<div class="ing-row"><span class="ing-amount">${i.amount||''}</span><span class="ing-name">${i.name||''}</span></div>`
-      ).join('');
+      ingEl.innerHTML = (d.ingredients || []).map((ing, idx) => {
+        const safeName = (ing.name||'').replace(/'/g, "\\'");
+        return `<div class="ing-row">
+          <span class="ing-amount">${ing.amount||''}</span>
+          <span class="ing-name">${ing.name||''}</span>
+          <button class="sub-btn" onclick="getSubstitute(${idx},this,'${safeName}')">↔ Sub</button>
+        </div>
+        <div class="sub-panel" id="sub-panel-${idx}" style="display:none"></div>`;
+      }).join('');
 
       // Steps
       const stepsEl = document.getElementById('r-steps');
@@ -2220,30 +2474,13 @@
         </div>`;
       }).join('');
 
-      // Macros
-      const n = d.nutrition || {};
-      const p = n.protein || 0, c = n.carbohydrates || 0, f = n.fat || 0;
-      const total = p * 4 + c * 4 + f * 9 || 1;
-      // Reset bars then animate
-      ['protein','carbs','fat'].forEach(k => document.getElementById('bar-'+k).style.width = '0');
-      setTimeout(() => {
-        document.getElementById('bar-protein').style.width = (p*4/total*100).toFixed(1)+'%';
-        document.getElementById('bar-carbs').style.width   = (c*4/total*100).toFixed(1)+'%';
-        document.getElementById('bar-fat').style.width     = (f*9/total*100).toFixed(1)+'%';
-      }, 200);
-
-      const stats = [
-        { val: n.calories||'—',      lbl: 'Calories' },
-        { val: (p||'—')+'g',         lbl: 'Protein' },
-        { val: (c||'—')+'g',         lbl: 'Carbs' },
-        { val: (f||'—')+'g',         lbl: 'Fat' },
-        { val: (n.fiber||'—')+'g',   lbl: 'Fiber' },
-        { val: (n.sodium||'—')+'mg', lbl: 'Sodium' },
-      ];
-      document.getElementById('r-macro-grid').innerHTML = stats.map(s =>
-        `<div class="macro-stat"><div class="macro-val">${s.val}</div><div class="macro-lbl">${s.lbl}</div></div>`
-      ).join('');
-      document.getElementById('r-macro-summary').textContent = n.macro_summary || '';
+      // Macros — set base, show scaler, animate rings
+      baseNutrition = d.nutrition || {};
+      baseServings  = d.servings || 1;
+      currentServings = baseServings;
+      document.getElementById('serving-count').textContent = currentServings;
+      document.getElementById('serving-scaler').style.display = 'flex';
+      setTimeout(() => updateNutritionDisplay(baseNutrition), 200);
 
       // Plating tip
       const pt = document.getElementById('r-plating');
@@ -2252,17 +2489,268 @@
         pt.style.display = 'flex';
       } else { pt.style.display = 'none'; }
 
-      // Missing optional
+      // Missing optional + shopping list
       const mc = document.getElementById('r-missing');
       if (d.missing_optional?.length) {
         document.getElementById('r-missing-list').innerHTML = d.missing_optional.map(m =>
           `<div class="missing-item">➕ <div><span class="m-name">${m.name}</span> — ${m.reason}</div></div>`
         ).join('');
         mc.style.display = 'block';
-      } else { mc.style.display = 'none'; }
+        document.getElementById('shopping-list-wrap').style.display = 'block';
+        document.getElementById('shopping-items').style.display = 'none';
+        document.querySelector('.shopping-list-btn') && (document.querySelector('.shopping-list-btn').textContent = '🛒 Generate Shopping List');
+      } else {
+        mc.style.display = 'none';
+      }
 
       goToPage('page-recipe');
       window._lastRecipe = d;
+      fireConfetti();
+    }
+
+    // ── Serving Scaler ──
+    let baseNutrition = null;
+    let baseServings  = 1;
+    let currentServings = 1;
+    const CIRC = 226.2; // 2π × r(36)
+
+    function changeServings(delta) {
+      currentServings = Math.max(1, Math.min(12, currentServings + delta));
+      document.getElementById('serving-count').textContent = currentServings;
+      const ratio = currentServings / baseServings;
+      const n = baseNutrition || {};
+      updateNutritionDisplay({
+        calories:      Math.round((n.calories||0) * ratio),
+        protein:       Math.round((n.protein||0) * ratio),
+        carbohydrates: Math.round((n.carbohydrates||0) * ratio),
+        fat:           Math.round((n.fat||0) * ratio),
+        fiber:         Math.round((n.fiber||0) * ratio),
+        sodium:        Math.round((n.sodium||0) * ratio),
+        macro_summary: n.macro_summary,
+      });
+      // Update servings badge
+      document.getElementById('r-macro-summary') && (
+        document.getElementById('macro-serving-label').textContent =
+          ` × ${currentServings} serving${currentServings !== 1 ? 's' : ''}`
+      );
+    }
+
+    function updateNutritionDisplay(n) {
+      const p = n.protein||0, c = n.carbohydrates||0, f = n.fat||0;
+      const total = p*4 + c*4 + f*9 || 1;
+
+      // Animate rings
+      const rProtein = document.getElementById('ring-protein');
+      const rCarbs   = document.getElementById('ring-carbs');
+      const rFat     = document.getElementById('ring-fat');
+      if (rProtein) rProtein.style.strokeDashoffset = (CIRC * (1 - p*4/total)).toFixed(1);
+      if (rCarbs)   rCarbs.style.strokeDashoffset   = (CIRC * (1 - c*4/total)).toFixed(1);
+      if (rFat)     rFat.style.strokeDashoffset     = (CIRC * (1 - f*9/total)).toFixed(1);
+      const rvp = document.getElementById('ring-val-protein');
+      const rvc = document.getElementById('ring-val-carbs');
+      const rvf = document.getElementById('ring-val-fat');
+      if (rvp) rvp.textContent = p + 'g';
+      if (rvc) rvc.textContent = c + 'g';
+      if (rvf) rvf.textContent = f + 'g';
+
+      // Stats grid
+      const stats = [
+        { val: n.calories||'—',      lbl: 'Calories' },
+        { val: (p||'—')+'g',         lbl: 'Protein' },
+        { val: (c||'—')+'g',         lbl: 'Carbs' },
+        { val: (f||'—')+'g',         lbl: 'Fat' },
+        { val: (n.fiber||'—')+'g',   lbl: 'Fiber' },
+        { val: (n.sodium||'—')+'mg', lbl: 'Sodium' },
+      ];
+      const grid = document.getElementById('r-macro-grid');
+      if (grid) grid.innerHTML = stats.map(s =>
+        `<div class="macro-stat"><div class="macro-val">${s.val}</div><div class="macro-lbl">${s.lbl}</div></div>`
+      ).join('');
+      const summary = document.getElementById('r-macro-summary');
+      if (summary) summary.textContent = n.macro_summary || '';
+    }
+
+    // ── Confetti ──
+    function fireConfetti() {
+      const colors = ['#e8a020','#52b788','#e05b32','#5e81f4','#f5b942','#ff6b6b','#4ecdc4','#ffd166'];
+      for (let i = 0; i < 110; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const size = 6 + Math.random() * 9;
+        p.style.cssText = `
+          left:${Math.random()*100}vw;
+          background:${colors[i % colors.length]};
+          animation-delay:${Math.random()*1.8}s;
+          animation-duration:${2.2+Math.random()*2}s;
+          width:${size}px;height:${size}px;
+          border-radius:${Math.random()>0.45?'50%':'3px'};
+          transform:rotate(${Math.random()*360}deg);
+        `;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 5000);
+      }
+    }
+
+    // ── Ingredient Substitution ──
+    async function getSubstitute(idx, btn, name) {
+      const panel = document.getElementById(`sub-panel-${idx}`);
+      if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+      panel.style.display = 'block';
+      panel.innerHTML = `<div class="sub-loading">Finding substitutes for "${name}"…</div>`;
+      try {
+        const r = await fetch('/api/substitute', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ ingredient: name, recipe_title: window._lastRecipe?.title || '' }),
+        });
+        const subs = await r.json();
+        if (!Array.isArray(subs) || !subs.length) throw new Error('none');
+        panel.innerHTML = `<div class="sub-title">Substitutes for ${name}</div>` +
+          subs.map(s => `<div class="sub-item">↔ <div><strong>${s.name}</strong> — ${s.note}</div></div>`).join('');
+      } catch(e) {
+        panel.innerHTML = `<div class="sub-title">Substitutes for ${name}</div><div class="sub-item" style="color:var(--text-muted)">Try a similar ingredient with comparable flavour and texture.</div>`;
+      }
+    }
+
+    // ── Shopping List ──
+    function toggleShoppingList() {
+      const items = document.getElementById('shopping-items');
+      const btn   = document.querySelector('.shopping-list-btn');
+      if (items.style.display !== 'none') { items.style.display = 'none'; if(btn) btn.textContent = '🛒 Generate Shopping List'; return; }
+      const missing = window._lastRecipe?.missing_optional || [];
+      items.innerHTML = missing.map((m, i) => `
+        <label class="shopping-item">
+          <input type="checkbox" id="shop-${i}" />
+          <div class="shopping-item-body">
+            <div class="shopping-item-name">${m.name}</div>
+            <div class="shopping-item-reason">${m.reason}</div>
+          </div>
+        </label>`).join('') +
+        `<button class="shopping-copy-btn" onclick="copyShoppingList()">📋 Copy to clipboard</button>`;
+      items.style.display = 'block';
+      if (btn) btn.textContent = '✕ Close Shopping List';
+    }
+
+    function copyShoppingList() {
+      const missing = window._lastRecipe?.missing_optional || [];
+      const text = '🛒 Shopping List — ' + (window._lastRecipe?.title || '') + '\n\n' +
+        missing.map(m => `□ ${m.name}  (${m.reason})`).join('\n');
+      navigator.clipboard?.writeText(text).then(() => showToast('Shopping list copied!', 'success'));
+    }
+
+    // ── Cook Mode ──
+    let cookSteps = [];
+    let cookCurrentStep = 0;
+    let cookTimerInterval = null;
+    let cookTimerRemaining = 0;
+    let cookTimerRunning = false;
+    let wakeLock = null;
+
+    function launchCookMode() {
+      const recipe = window._lastRecipe;
+      if (!recipe?.steps?.length) { showToast('No recipe loaded!', 'error'); return; }
+      cookSteps = recipe.steps;
+      cookCurrentStep = 0;
+      document.getElementById('cook-done').style.display = 'none';
+      document.getElementById('cook-body').style.display = 'flex';
+      renderCookStep();
+      document.getElementById('cook-overlay').style.display = 'flex';
+      // Keep screen awake
+      if ('wakeLock' in navigator) {
+        navigator.wakeLock.request('screen').then(l => { wakeLock = l; }).catch(() => {});
+      }
+    }
+
+    function closeCookMode() {
+      document.getElementById('cook-overlay').style.display = 'none';
+      clearCookTimer();
+      if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+    }
+
+    function renderCookStep() {
+      const step   = cookSteps[cookCurrentStep];
+      const text   = typeof step === 'object' ? step.instruction : step;
+      const utensil = typeof step === 'object' ? step.utensil : '';
+      const total  = cookSteps.length;
+
+      document.getElementById('cook-step-num').textContent   = cookCurrentStep + 1;
+      document.getElementById('cook-step-total').textContent = total;
+      document.getElementById('cook-step-label').textContent = `Step ${cookCurrentStep + 1} of ${total}`;
+      document.getElementById('cook-step-text').textContent  = text;
+
+      const uEl = document.getElementById('cook-utensil');
+      if (utensil) { document.getElementById('cook-utensil-text').textContent = utensil; uEl.style.display = 'inline-flex'; }
+      else { uEl.style.display = 'none'; }
+
+      // Dots
+      const dotsEl = document.getElementById('cook-dots');
+      dotsEl.innerHTML = cookSteps.map((_, i) =>
+        `<div class="cook-dot${i === cookCurrentStep ? ' active' : ''}"></div>`
+      ).join('');
+
+      document.getElementById('cook-prev-btn').disabled = cookCurrentStep === 0;
+      const nextBtn = document.getElementById('cook-next-btn');
+      nextBtn.textContent = cookCurrentStep === total - 1 ? 'Done ✓' : 'Next →';
+
+      clearCookTimer();
+      document.getElementById('cook-timer-input').value = '';
+      document.getElementById('cook-timer-display').textContent = '';
+    }
+
+    function cookStep(delta) {
+      clearCookTimer();
+      const newStep = cookCurrentStep + delta;
+      if (newStep >= cookSteps.length) {
+        // All done!
+        document.getElementById('cook-body').style.display = 'none';
+        document.getElementById('cook-done').style.display = 'flex';
+        document.getElementById('cook-prev-btn').disabled = false;
+        document.getElementById('cook-next-btn').disabled = true;
+        return;
+      }
+      if (newStep < 0) return;
+      cookCurrentStep = newStep;
+      document.getElementById('cook-body').style.display = 'flex';
+      document.getElementById('cook-done').style.display = 'none';
+      document.getElementById('cook-next-btn').disabled = false;
+      renderCookStep();
+    }
+
+    function toggleCookTimer() {
+      if (cookTimerRunning) {
+        clearInterval(cookTimerInterval); cookTimerRunning = false;
+        document.getElementById('cook-timer-btn').textContent = '▶ Resume';
+      } else {
+        if (!cookTimerRemaining) {
+          const mins = parseInt(document.getElementById('cook-timer-input').value);
+          if (!mins || mins < 1) { showToast('Enter minutes first', 'error'); return; }
+          cookTimerRemaining = mins * 60;
+        }
+        cookTimerRunning = true;
+        document.getElementById('cook-timer-btn').textContent = '⏸ Pause';
+        cookTimerInterval = setInterval(tickCookTimer, 1000);
+      }
+    }
+
+    function tickCookTimer() {
+      cookTimerRemaining--;
+      const m = Math.floor(cookTimerRemaining / 60);
+      const s = cookTimerRemaining % 60;
+      const disp = document.getElementById('cook-timer-display');
+      disp.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      disp.className = 'cook-timer-display' + (cookTimerRemaining <= 10 && cookTimerRemaining > 0 ? ' urgent' : '');
+      if (cookTimerRemaining <= 0) {
+        clearInterval(cookTimerInterval); cookTimerRunning = false;
+        disp.textContent = '⏰ Done!'; disp.className = 'cook-timer-display';
+        document.getElementById('cook-timer-btn').textContent = '▶ Start';
+        cookTimerRemaining = 0;
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+      }
+    }
+
+    function clearCookTimer() {
+      clearInterval(cookTimerInterval); cookTimerRunning = false; cookTimerRemaining = 0;
+      const btn = document.getElementById('cook-timer-btn');
+      if (btn) btn.textContent = '▶ Start';
     }
 
     function regenerate() { goToPage('page-input'); }
