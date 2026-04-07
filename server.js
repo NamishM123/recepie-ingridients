@@ -292,11 +292,31 @@ const communityFeed = [
   },
 ];
 
-app.get('/api/feed', (_req, res) => {
-  res.json(communityFeed.slice().sort((a, b) => b.postedAt - a.postedAt));
+async function unsplashImage(query) {
+  if (!process.env.UNSPLASH_ACCESS_KEY) return null;
+  try {
+    const q = encodeURIComponent(query + ' food dish');
+    const r = await fetch(
+      `https://api.unsplash.com/search/photos?query=${q}&orientation=landscape&per_page=1&order_by=relevant`,
+      { headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` } }
+    );
+    const data = await r.json();
+    return data.results?.[0]?.urls?.regular || null;
+  } catch { return null; }
+}
+
+app.get('/api/feed', async (_req, res) => {
+  const feed = communityFeed.slice().sort((a, b) => b.postedAt - a.postedAt);
+  // Fetch + cache Unsplash images for any post that doesn't have one yet
+  await Promise.all(feed.map(async post => {
+    if (!post.image_url) {
+      post.image_url = await unsplashImage(post.title);
+    }
+  }));
+  res.json(feed);
 });
 
-app.post('/api/share', (req, res) => {
+app.post('/api/share', async (req, res) => {
   const { recipe, author, avatar } = req.body;
   if (!recipe?.title) return res.status(400).json({ error: 'Recipe data required.' });
   const post = {
@@ -306,6 +326,7 @@ app.post('/api/share', (req, res) => {
     avatar: avatar || '🍳',
     likes: 0,
     postedAt: Date.now(),
+    image_url: recipe.image_url || await unsplashImage(recipe.title),
   };
   communityFeed.unshift(post);
   res.json(post);
